@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Heart, Download, Share2, Eye, Palette, Sparkles } from "lucide-react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { title } from "process"
 import { Description } from "@radix-ui/react-toast"
 import { useSearchParams } from "next/navigation"
@@ -196,7 +196,7 @@ const artworks = [
 
 const categories = ["All","Pixel Art", "Digital Art", "Graphic Design", "Illustration","Product Designs"]
 
-export default function ArtsPage() {
+function ArtsContent() {
 	const [selectedCategory, setSelectedCategory] = useState("All")
 	const [viewMode, setViewMode] = useState<"grid" | "masonry">("masonry")
 
@@ -500,5 +500,13 @@ export default function ArtsPage() {
 				</section>
 			</div>
 		</div>
+	)
+}
+
+export default function ArtsPage() {
+	return (
+		<Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+			<ArtsContent />
+		</Suspense>
 	)
 }
