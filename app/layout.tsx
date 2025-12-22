@@ -5,6 +5,7 @@ import { GeistMono } from "geist/font/mono"
 import { Analytics } from "@vercel/analytics/next"
 import { Navigation } from "@/components/navigation"
 import { FloatingSocial } from "@/components/floating-social"
+import { ThemeProvider } from "@/components/theme-provider"
 import "./globals.css"
 import { Suspense } from "react"
 
@@ -59,14 +60,21 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
-        <Suspense>
-          <Navigation />
-          <FloatingSocial />
-        </Suspense>
-        <main className="pt-16">{children}</main>
-        <Analytics />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Suspense>
+            <Navigation />
+            <FloatingSocial />
+          </Suspense>
+          <main className="pt-16">{children}</main>
+          <Analytics />
+        </ThemeProvider>
       </body>
     </html>
   )
