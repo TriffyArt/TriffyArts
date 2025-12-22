@@ -71,16 +71,61 @@ export default function ContactPage() {
 	})
 
 	const [isSubmitting, setIsSubmitting] = useState(false)
+	const [lastSubmitTime, setLastSubmitTime] = useState<number>(0)
+	const [submitCount, setSubmitCount] = useState<number>(0)
+	const [honeypot, setHoneypot] = useState("")
+	const [errorMessage, setErrorMessage] = useState("")
+	const [successMessage, setSuccessMessage] = useState("")
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
 		setFormData({
 			...formData,
 			[e.target.name]: e.target.value,
 		})
+		setErrorMessage("") // Clear error on input change
 	}
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
+		setErrorMessage("")
+		setSuccessMessage("")
+
+		// Anti-spam checks
+		const currentTime = Date.now()
+		const timeSinceLastSubmit = currentTime - lastSubmitTime
+
+		// Honeypot check (bot trap)
+		if (honeypot) {
+			console.log("Spam detected: honeypot filled")
+			return
+		}
+
+		// Rate limiting: prevent multiple submissions within 30 seconds
+		if (timeSinceLastSubmit < 30000 && lastSubmitTime > 0) {
+			setErrorMessage("Please wait at least 30 seconds before submitting again.")
+			return
+		}
+
+		// Check for too many submissions in short time (5 submissions per hour)
+		if (submitCount >= 5) {
+			setErrorMessage("You've reached the maximum number of submissions. Please try again later.")
+			return
+		}
+
+		// Basic spam detection: check for excessive links or suspicious patterns
+		const messageText = `${formData.name} ${formData.email} ${formData.subject} ${formData.message}`
+		const linkCount = (messageText.match(/https?:\/\//g) || []).length
+		if (linkCount > 2) {
+			setErrorMessage("Your message contains too many links. Please remove some and try again.")
+			return
+		}
+
+		// Check minimum message length
+		if (formData.message.length < 10) {
+			setErrorMessage("Please provide a more detailed message (at least 10 characters).")
+			return
+		}
+
 		setIsSubmitting(true)
 
 		try {
@@ -93,7 +138,10 @@ export default function ContactPage() {
 			})
 
 			if (response.ok) {
-				console.log("Form submitted successfully!")
+				setSuccessMessage("Message sent successfully! I'll get back to you soon.")
+				setLastSubmitTime(currentTime)
+				setSubmitCount(submitCount + 1)
+				
 				// Reset form
 				setFormData({
 					name: "",
@@ -139,6 +187,31 @@ export default function ContactPage() {
 							</div>
 
 							<form onSubmit={handleSubmit} className="space-y-6">
+								{/* Honeypot field - hidden from users, only bots will fill it */}
+								<input
+									type="text"
+									name="website"
+									value={honeypot}
+									onChange={(e) => setHoneypot(e.target.value)}
+									style={{ display: 'none' }}
+									tabIndex={-1}
+									autoComplete="off"
+								/>
+
+								{/* Error Message */}
+								{errorMessage && (
+									<div className="p-4 bg-destructive/10 border border-destructive/20 rounded-md text-destructive text-sm">
+										{errorMessage}
+									</div>
+								)}
+
+								{/* Success Message */}
+								{successMessage && (
+									<div className="p-4 bg-green-500/10 border border-green-500/20 rounded-md text-green-600 text-sm">
+										{successMessage}
+									</div>
+								)}
+
 								<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 									<div>
 										<label htmlFor="name" className="block text-sm font-medium mb-2">
