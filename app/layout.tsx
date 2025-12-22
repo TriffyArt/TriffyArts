@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     description: 'Digital artist and creative designer specializing in digital art, web design, and UI/UX design.',
     images: [
       {
-        url: '/my-face.jpg',
+        url: '/CoverPhoto.jpg',
         width: 1200,
         height: 630,
         alt: 'Psalm Salcedo Portfolio',
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Psalm Salcedo - Creative Artist & Designer',
     description: 'Digital artist and creative designer specializing in digital art, web design, and UI/UX design.',
-    images: ['/my-face.jpg'],
+    images: ['/CoverPhoto.jpg'],
   },
   robots: {
     index: true,
