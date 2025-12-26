@@ -10,7 +10,7 @@ import "./globals.css"
 import { Suspense } from "react"
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://triffy-arts.vercel.app'), // Update this with your actual domain
+  metadataBase: new URL('https://triffy-arts.vercel.app'),
   title: {
     default: 'Psalm Salcedo - Creative Artist & Designer | Portfolio',
     template: '%s | Psalm Salcedo'
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   creator: 'Psalm Salcedo',
   openGraph: {
     type: 'website',
-    locale: 'en_US',
+    locale: 'en_PH',
     url: 'https://triffy-arts.vercel.app',
     siteName: 'Psalm Salcedo Portfolio',
     title: 'Psalm Salcedo - Creative Artist & Designer',
@@ -60,7 +60,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en-PH" suppressHydrationWarning>
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
         <ThemeProvider
           attribute="class"
@@ -76,6 +76,4 @@ export default function RootLayout({
           <Analytics />
         </ThemeProvider>
       </body>
-    </html>
-  )
-}
+    </html> 

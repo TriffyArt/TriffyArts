@@ -38,7 +38,7 @@ export default function AboutPage() {
                   </Link>
                 </Button>
                 <Button variant="outline" className="group bg-transparent" asChild>
-                  <a href="/resume.pdf" download>
+                  <a href="https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Resume.pdf" download>
                     <Download className="mr-2 h-4 w-4 transition-transform group-hover:translate-y-0.5" />
                     Download Resume
                   </a>
