@@ -10,7 +10,7 @@ import "./globals.css"
 import { Suspense } from "react"
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://triffy-arts.vercel.app'),
+  metadataBase: new URL('https://triffyarts.vercel.app'),
   title: {
     default: 'Psalm Salcedo - Creative Artist & Designer | Portfolio',
     template: '%s | Psalm Salcedo'
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_PH',
-    url: 'https://triffy-arts.vercel.app',
+    url: 'https://triffyarts.vercel.app',
     siteName: 'Psalm Salcedo Portfolio',
     title: 'Psalm Salcedo - Creative Artist & Designer',
     description: 'Digital artist and creative designer specializing in digital art, web design, and UI/UX design.',
