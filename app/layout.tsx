@@ -6,6 +6,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { Navigation } from "@/components/navigation"
 import { FloatingSocial } from "@/components/floating-social"
 import { ThemeProvider } from "@/components/theme-provider"
+import StructuredData from "@/components/structured-data"
 import "./globals.css"
 import { Suspense } from "react"
 
@@ -19,6 +20,9 @@ export const metadata: Metadata = {
   keywords: ['Psalm Salcedo', 'digital artist', 'creative designer', 'web design', 'UI/UX design', 'digital art', 'portfolio', 'Legazpi', 'Albay', 'Philippines', 'graphic design'],
   authors: [{ name: 'Psalm Salcedo' }],
   creator: 'Psalm Salcedo',
+  alternates: {
+    canonical: 'https://triffyarts.vercel.app',
+  },
   openGraph: {
     type: 'website',
     locale: 'en_PH',
@@ -40,6 +44,7 @@ export const metadata: Metadata = {
     title: 'Psalm Salcedo - Creative Artist & Designer',
     description: 'Digital artist and creative designer specializing in digital art, web design, and UI/UX design.',
     images: ['/CoverPhoto.jpg'],
+    creator: '@psalmsalcedo',
   },
   robots: {
     index: true,
@@ -61,6 +66,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en-PH" suppressHydrationWarning>
+      <head>
+        <StructuredData />
+      </head>
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
         <ThemeProvider
           attribute="class"

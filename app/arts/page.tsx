@@ -192,6 +192,58 @@ const artworks = [
 		tags: ["Digital Art","Game Character Art","Vector Asset"],
 		featured: false,
 	},
+	{
+		id: 15,
+		title: "Pixel House on Christmas",
+		Description: 
+			"Pixel art house decorated for christmas, used in Capcut Pro stickers",
+		image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Pixel%20House.gif",
+		category: "Pixel Art",
+		medium: "Pixel Art",
+		dimension: "610x400px",
+		year: "2025",
+		tags: ["Pixel Art","Christmas","GIF Sticker"],
+		featured: false,
+	},
+	{
+		id: 16,
+		title: "Pixel Mochi Santa",
+		Description: 
+			"Pixel art mochi character dressed in santa hat, used in Capcut Pro stickers",
+		image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Mochi%20Santa%20Christmas%20EN.gif",
+		category: "Pixel Art",
+		medium: "Pixel Art",
+		dimension: "800x800px",
+		year: "2025",
+		tags: ["Pixel Art","Christmas","GIF Sticker"],
+		featured: false,
+	},
+	{
+		id: 17,
+		title: "Pixel Snowball Santa",
+		Description: 
+			"Pixel art Snowball character dressed in santa hat, used in Capcut Pro stickers",
+		image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Snowball%20Santa%20Christmas%20EN.gif",
+		category: "Pixel Art",
+		medium: "Pixel Art",
+		dimension: "800x800px",
+		year: "2025",
+		tags: ["Pixel Art","Christmas","GIF Sticker"],
+		featured: false,
+	},
+	{
+		id: 18,
+		title: "Pixel Snowman",
+		Description: 
+			"Pixel art Snowman character dressed for winter, used in Capcut Pro stickers",
+		image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Snowman%20Christmas%20EN.gif",
+		category: "Pixel Art",
+		medium: "Pixel Art",
+		dimension: "800x800px",
+		year: "2025",
+		tags: ["Pixel Art","Christmas","GIF Sticker"],
+		featured: false,
+	},
 ]
 
 const categories = ["All","Pixel Art", "Digital Art", "Graphic Design", "Illustration","Product Designs"]
