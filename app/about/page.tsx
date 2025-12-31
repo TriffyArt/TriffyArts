@@ -22,11 +22,10 @@ export default function AboutPage() {
                 Hello, I'm <span className="text-primary">Psalm</span>
               </h1>
               <p className="text-xl text-muted-foreground text-balance mb-6 leading-relaxed">
-                A passionate digital artist and creative designer with over 3 years of experience crafting beautiful,
-                meaningful visual experiences that tell stories and evoke emotions.
+                A passionate digital artist and creative designer with over 3 years of experience in digital art and web UI/UX design.
               </p>
               <p className="text-lg text-muted-foreground text-balance mb-8 leading-relaxed">
-                Based in Legazpi, Albay, I specialize in digital art and web design. 
+                Based in Legazpi, Albay, I specialize in digital art and web UI/UX design. 
                 My work combines traditional artistic principles within a modern digital 
                 techniques to craft unique and captivating visual narratives.
               </p>
@@ -125,10 +124,17 @@ export default function AboutPage() {
 
               {[
                 {
-                  year: "2025",
+                  year: "present",
                   title: "Custom Clay Artisan Keycaps Maker",
                   company: "Capora (owner)",
                   description: "I make custom clay artisan keycaps for mechanical keyboards.",
+                  current: true,
+                },
+                  {
+                  year: "present",
+                  title: "Sticker Designer & Digital Artist",
+                  company: "bytedance (Capcut Creator Program)",
+                  description: "Creating popular sticker packs and digital art assets for Capcut users worldwide.",
                   current: true,
                 },
                 {
