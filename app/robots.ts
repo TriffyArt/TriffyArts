@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: '/api/',
     },
-    sitemap: 'https://triffyarts.vercel.app/sitemap.xml',
+    sitemap: 'https://triffyarts.vercel.app/sitemaps/sitemap.xml',
   }
 }
