@@ -34,6 +34,19 @@ const projects = [
     	ProjectType: "Self Project",
 		link: "https://www.figma.com/community/file/1572867449289424978/foodpanda-ui-ux-design",
 	},
+	{
+		id: 3,
+		title: "Horizontal Card Carousel Slider",
+		description:
+			"a sleek and interactive horizontal card carousel slider designed to showcase content in an engaging manner. Perfect for portfolios, product displays, or featured articles, this design emphasizes smooth transitions and user-friendly navigation.",
+		image: "/Slider.png",
+		category: "Web Design",
+		tags: ["Web Design", "UI/UX", "React.js", "Inventory System"],
+		year: "2025",
+    	client: "Self-Initiated",
+    	ProjectType: "Self Project",
+		link: "https://www.figma.com/community/file/1584093410014962661/horizontal-card-carousel-slider",
+	},
 ]
 
 const categories = [
