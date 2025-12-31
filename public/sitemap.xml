@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://triffyarts.vercel.app</loc>
     <lastmod>2025-12-30T13:25:34.669Z</lastmod>
@@ -21,7 +21,7 @@
   <url>
     <loc>https://triffyarts.vercel.app/arts</loc>
     <lastmod>2025-12-30T13:25:34.669Z</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>weekly</changefreq> 
     <priority>0.9</priority>
   </url>
   <url>
