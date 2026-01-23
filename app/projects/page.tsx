@@ -27,7 +27,7 @@ const projects = [
 		description:
 			"A user-friendly and visually appealing UI/UX design for a food delivery application, inspired by FoodPanda. The design focuses on intuitive navigation, vibrant visuals, and seamless user interactions to enhance the overall user experience.",
 		image: "/FPclone.png",
-		category: "App Design",
+		category: ["App Design", "UI/UX"],
 		tags: ["Web Design", "UI/UX", "React.js", "Inventory System"],
 		year: "2024",
     	client: "Self-Initiated",
@@ -40,12 +40,25 @@ const projects = [
 		description:
 			"a sleek and interactive horizontal card carousel slider designed to showcase content in an engaging manner. Perfect for portfolios, product displays, or featured articles, this design emphasizes smooth transitions and user-friendly navigation.",
 		image: "/Slider.png",
-		category: "Web Design",
-		tags: ["Web Design", "UI/UX", "React.js", "Inventory System"],
+		category: ["Web Design", "UI/UX"],
+		tags: ["Web Design", "UI/UX", "Figma"],
 		year: "2025",
     	client: "Self-Initiated",
     	ProjectType: "Self Project",
 		link: "https://www.figma.com/community/file/1584093410014962661/horizontal-card-carousel-slider",
+	},
+	{
+		id: 4,
+		title: "DWPHxDWGlobal2025 Competition Landing Page Design",
+		description:
+			"A modern and visually captivating landing page design for the DWPHxDWGlobal2025 competition. The design highlights key information about the company, encourages user engagement, and provides a seamless experience for visitors interested in participating or learning more about the competition.",
+		image: "/DWPHCover.jpg",
+		category: ["Web Design", "Branding", "UI/UX"],
+		tags: ["Web Design", "UI/UX", "Figma"],
+		year: "2025",
+    	client: "Digital Workforce Group PH x Global",
+    	ProjectType: "Competition Project",
+		link: "https://www.figma.com/proto/89RwA1jwEuO7B33kktyrN9/Psalm-Zyhrone-M.-Salcedo_DWPHxDWGlobal2025",
 	},
 ]
 
@@ -57,6 +70,7 @@ const categories = [
 	"Digital Art",
 	"Packaging",
 	"Web Development",
+	"UI/UX",
 ]
 
 export default function ProjectsPage() {
