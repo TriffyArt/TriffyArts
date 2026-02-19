@@ -79,7 +79,11 @@ export default function ProjectsPage() {
 	const filteredProjects =
 		selectedCategory === "All"
 			? projects
-			: projects.filter((project) => project.category === selectedCategory)
+			: projects.filter((project) =>
+				Array.isArray(project.category)
+					? project.category.includes(selectedCategory)
+					: project.category === selectedCategory
+			)
 
 	return (
 		<div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
@@ -183,7 +187,7 @@ export default function ProjectsPage() {
 								<div className="p-6">
 									<div className="flex items-center justify-between mb-3">
 										<Badge variant="secondary" className="text-xs">
-											{project.category}
+											{Array.isArray(project.category) ? project.category.join(", ") : project.category}
 										</Badge>
 										<div className="flex items-center gap-1 text-xs text-muted-foreground">
 											<Calendar className="h-3 w-3" />
