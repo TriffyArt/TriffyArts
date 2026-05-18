@@ -60,6 +60,19 @@ const projects = [
     	ProjectType: "Competition Project",
 		link: "https://www.figma.com/proto/89RwA1jwEuO7B33kktyrN9/Psalm-Zyhrone-M.-Salcedo_DWPHxDWGlobal2025",
 	},
+		{
+		id: 5,
+		title: "YearnSafe - Share anonymously, feel deeply",
+		description:
+			"The music-backed anonymous wall for people who need to say it with a song. Share a feeling, browse the feed, and support the community.",
+		image: "/yearnsafe.png",
+		category: ["web development"],
+		tags: ["web development", "react.js", "next.js", "tailwindcss"],
+		year: "2026",
+    	client: "self-initiated",
+    	ProjectType: "self project",
+		link: "https://yearnsafe.vercel.app",
+	},
 ]
 
 const categories = [
