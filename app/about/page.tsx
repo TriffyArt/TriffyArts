@@ -22,7 +22,7 @@ export default function AboutPage() {
                 Hello, I'm <span className="text-primary">Psalm</span>
               </h1>
               <p className="text-xl text-muted-foreground text-balance mb-6 leading-relaxed">
-                a passionate digital artist, Web UI/UX Designer with over 3 years of experience in digital art and web UI/UX design.
+                a passionate digital artist, Web UI/UX Designer with over 4 years of experience in digital art and web UI/UX design.
               </p>
               <p className="text-lg text-muted-foreground text-balance mb-8 leading-relaxed">
                 Based in Legazpi, Albay, I specialize in digital art and web UI/UX design. 
