@@ -11,6 +11,10 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  if (request.headers.get("origin") !== request.nextUrl.origin) {
+    return NextResponse.json({ error: "Invalid request origin" }, { status: 403 })
+  }
+
   const { password } = (await request.json()) as { password?: string }
   if (!password || !process.env.PORTFOLIO_ADMIN_PASSWORD) {
     return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })

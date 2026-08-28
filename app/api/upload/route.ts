@@ -3,8 +3,12 @@ import { NextRequest, NextResponse } from "next/server"
 import { isAdminAuthenticated } from "@/lib/portfolio-auth"
 
 export async function POST(request: NextRequest) {
-  if (!isAdminAuthenticated()) {
+  if (request.headers.get("origin") !== request.nextUrl.origin || !isAdminAuthenticated()) {
     return NextResponse.json({ error: "Admin authentication required" }, { status: 401 })
+  }
+
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    return NextResponse.json({ error: "BLOB_READ_WRITE_TOKEN is not configured" }, { status: 500 })
   }
 
   try {
@@ -16,6 +20,14 @@ export async function POST(request: NextRequest) {
         { error: "No file provided" },
         { status: 400 }
       )
+    }
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"]
+    if (!allowedTypes.includes(file.type)) {
+      return NextResponse.json({ error: "Only JPG, PNG, GIF, and WebP images are allowed" }, { status: 400 })
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      return NextResponse.json({ error: "Images must be 10 MB or smaller" }, { status: 400 })
     }
 
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-")
@@ -30,7 +42,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Upload error:", error)
     return NextResponse.json(
-      { error: "Upload failed" },
+      { error: error instanceof Error ? `Upload failed: ${error.message}` : "Upload failed" },
       { status: 500 }
     )
   }

@@ -66,22 +66,19 @@ const projects = [
 		description:
 			"The music-backed anonymous wall for people who need to say it with a song. Share a feeling, browse the feed, and support the community.",
 		image: "/yearnsafe.png",
-		category: ["web development"],
-		tags: ["web development", "react.js", "next.js", "tailwindcss"],
+		category: ["Web Development"],
+		tags: ["Web Development", "React.js", "Next.js", "TailwindCSS"],
 		year: "2026",
-    	client: "self-initiated",
-    	ProjectType: "self project",
-		link: "https://yearnsafe.vercel.app",
+    	client: "Self-Initiated",
+    	ProjectType: "Self Project",
+		link: "https://yearnsafe.site",
 	},
 ]
 
 const categories = [
 	"All",
-	"Branding",
 	"Web Design",
 	"App Design",
-	"Digital Art",
-	"Packaging",
 	"Web Development",
 	"UI/UX",
 ]

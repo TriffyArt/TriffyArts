@@ -16,6 +16,7 @@ import {
 const designWorks = [
   {
     id: 1,
+    type: "Graphic Design" as const,
     title: "Pinoy Vanilla Rust 2X",
     description:
       "A bold promotional graphic created for a public-facing campaign, combining illustrated character work with strong display typography.",
@@ -72,6 +73,7 @@ const socialMediaWorks = [
 const designFolders = [
   {
     id: 1,
+    type: "Graphic Design" as const,
     title: "Rust Server Event Campaign",
     description:
       "A compiled collection of promotional graphics created for the Pinoy Vanilla Rust 2X event.",
@@ -105,7 +107,9 @@ export default function GraphicDesignPage() {
     fetch("/api/portfolio", { cache: "no-store" })
       .then((response) => (response.ok ? response.json() : null))
       .then((data) => {
-        if (data?.folders?.length) setFolders(data.folders)
+        if (data?.folders?.length) {
+          setFolders(data.folders.filter((folder: { type?: string }) => !folder.type || folder.type === "Graphic Design"))
+        }
       })
       .catch(() => undefined)
   }, [])

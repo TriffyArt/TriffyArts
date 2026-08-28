@@ -1,27 +1,39 @@
-import { del, list, put } from "@vercel/blob"
+import { list, put } from "@vercel/blob"
 import { NextRequest, NextResponse } from "next/server"
 import { isAdminAuthenticated } from "@/lib/portfolio-auth"
+import { z } from "zod"
 
 const FOLDER_PREFIX = "portfolio/folders/"
 
-type FolderItem = {
-  id: string
-  title: string
-  description: string
-  image: string
-  category: string
-  year: string
-  tags: string[]
-}
+const folderItemSchema = z.object({
+  id: z.string().min(1).max(200),
+  title: z.string().min(1).max(200),
+  description: z.string().max(2000),
+  image: z.string().url(),
+  category: z.string().min(1).max(80),
+  year: z.string().regex(/^\d{4}$/),
+  tags: z.array(z.string().min(1).max(80)).max(20),
+}).strict()
 
-type DesignFolder = {
-  id: string
-  title: string
-  description: string
-  preview: string
-  category: string
-  year: string
-  items: FolderItem[]
+const folderSchema = z.object({
+  id: z.string().regex(/^[a-z0-9-]+$/).max(200),
+  type: z.enum(["Graphic Design", "Arts", "Projects"]),
+  title: z.string().min(1).max(200),
+  description: z.string().max(2000),
+  preview: z.string().url(),
+  category: z.string().min(1).max(80),
+  year: z.string().regex(/^\d{4}$/),
+  client: z.string().max(200).optional(),
+  projectType: z.string().max(200).optional(),
+  link: z.string().url().optional().or(z.literal("")),
+  items: z.array(folderItemSchema).min(1).max(100),
+}).strict()
+
+type DesignFolder = z.infer<typeof folderSchema>
+
+function isSameOrigin(request: NextRequest) {
+  const origin = request.headers.get("origin")
+  return origin === request.nextUrl.origin
 }
 
 async function readFolders(): Promise<DesignFolder[]> {
@@ -49,39 +61,25 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  if (!isAdminAuthenticated()) return unauthorized()
+  if (!isSameOrigin(request) || !isAdminAuthenticated()) return unauthorized()
 
   try {
-    const folder = (await request.json()) as DesignFolder
-    if (!folder.id || !folder.title || !folder.category || !Array.isArray(folder.items)) {
-      return NextResponse.json({ error: "Folder id, title, category, and items are required" }, { status: 400 })
+    const parsed = folderSchema.safeParse(await request.json())
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid portfolio data" }, { status: 400 })
     }
+    const savedFolder = parsed.data
 
-    const pathname = `${FOLDER_PREFIX}${folder.id}.json`
-    const blob = await put(pathname, JSON.stringify(folder), {
+    const pathname = `${FOLDER_PREFIX}${savedFolder.id}.json`
+    const blob = await put(pathname, JSON.stringify(savedFolder), {
       access: "public",
       addRandomSuffix: false,
       contentType: "application/json",
     })
-    return NextResponse.json({ folder, url: blob.url }, { status: 201 })
+    return NextResponse.json({ folder: savedFolder, url: blob.url }, { status: 201 })
   } catch (error) {
     console.error("Portfolio write error:", error)
     return NextResponse.json({ error: "Could not save portfolio folder" }, { status: 500 })
   }
 }
 
-export async function DELETE(request: NextRequest) {
-  if (!isAdminAuthenticated()) return unauthorized()
-
-  try {
-    const { id } = (await request.json()) as { id?: string }
-    if (!id) return NextResponse.json({ error: "Folder id is required" }, { status: 400 })
-
-    const { blobs } = await list({ prefix: `${FOLDER_PREFIX}${id}.json` })
-    await Promise.all(blobs.map((blob) => del(blob.url)))
-    return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error("Portfolio delete error:", error)
-    return NextResponse.json({ error: "Could not delete portfolio folder" }, { status: 500 })
-  }
-}
