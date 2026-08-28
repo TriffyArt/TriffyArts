@@ -167,19 +167,6 @@ const artworks = [
 		featured: false,
 	},
 	{
-		id: 13,
-		title: "Rust Server Poster",
-		Description:
-			"Rust Game Server poster banner for social media advertisement",
-		image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/GD1.png",
-		category: "Graphic Design",
-		medium: "Digital art",
-		dimension:"940x788px",
-		year: "2025",
-		tags: ["Graphic Design", "Game Poster", "Social Media Poster"],
-		featured: false,
-	},
-	{
 		id: 14,
 		title: "Rust Character Full White out kit",
 		Description: 
@@ -246,7 +233,7 @@ const artworks = [
 	},
 ]
 
-const categories = ["All","Pixel Art", "Digital Art", "Graphic Design", "Illustration","Product Designs"]
+const categories = ["All","Pixel Art", "Digital Art", "Illustration","Product Designs"]
 
 function ArtsContent() {
 	const [selectedCategory, setSelectedCategory] = useState("All")
@@ -256,10 +243,12 @@ function ArtsContent() {
 
 	// Lightbox state (index-based)
 	const [modalOpen, setModalOpen] = useState(false)
+	const [isClosing, setIsClosing] = useState(false)
 	const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
 
 	const openModalByIndex = (index: number) => {
 		if (index < 0) return
+		setIsClosing(false)
 		setSelectedIndex(index)
 		setModalOpen(true)
 	}
@@ -276,8 +265,13 @@ function ArtsContent() {
 	}, [searchParams])
 
 	const closeModal = () => {
+		if (!modalOpen) return
 		setModalOpen(false)
-		setSelectedIndex(null)
+		setIsClosing(true)
+		window.setTimeout(() => {
+			setSelectedIndex(null)
+			setIsClosing(false)
+		}, 250)
 	}
 
 	const showPrev = () => {
@@ -496,9 +490,9 @@ function ArtsContent() {
 				</section>
 
 				{/* Lightbox Modal */}
-				{modalOpen && selectedArtwork && (
+				{(modalOpen || isClosing) && selectedArtwork && (
 					<div
-						className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+						className={`fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 ${isClosing ? "arts-lightbox-exit" : "arts-lightbox-enter"}`}
 						role="dialog"
 						aria-modal="true"
 						onClick={closeModal}

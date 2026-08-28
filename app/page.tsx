@@ -13,22 +13,24 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center animate-fade-in">
+      <section
+        className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 bg-cover bg-center"
+        style={{ backgroundImage: "url('/hero-background.png')" }}
+      >
+        <div className="absolute inset-0 bg-background/20 dark:bg-background/70" />
+
+        <div className="relative z-10 w-full lg:w-auto max-w-4xl mr-0 lg:mr-100 text-center lg:text-left animate-fade-in">
           <div className="mb-8">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-primary/10 rounded-full mb-6 animate-float">
-              <Palette className="w-10 h-10 text-primary" />
-            </div>
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-balance mb-6">
               Creative <span className="text-primary">Artist</span>
               <br />& Designer
             </h1>
-            <p className="text-xl sm:text-2xl text-muted-foreground text-balance max-w-2xl mx-auto mb-8">
+            <p className="text-xl sm:text-2xl text-muted-foreground text-balance max-w-2xl mx-auto mb-8 text-white">
               Crafting beautiful digital experiences through art, design, and creative storytelling
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center">
             <Button asChild size="lg" className="group">
               <Link href="/projects">
                 View My Work
@@ -58,7 +60,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            {[
+            {([
               {
                 icon: Palette,
                 title: "Digital Art",
@@ -83,7 +85,7 @@ export default function HomePage() {
                 description: "Handcrafted polymer clay keychains and artisan pieces made with care",
                 color: "text-purple-500",
               },
-            ].map((service, index) => (
+            ]).map((service, index) => (
               <Card
                 key={service.title}
                 className="p-6 hover:shadow-lg transition-all duration-300 animate-slide-up group"
@@ -111,7 +113,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
+            {([
               {
                 image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Welcome2025.gif",
                 title: "Welcome 2025",
@@ -130,7 +132,7 @@ export default function HomePage() {
                 category: "Pixel Art",
                 artId: 3,
               },
-            ].map((project, index) => (
+            ]).map((project, index) => (
               <Link href={`/arts?id=${project.artId}`} key={project.title}>
                 <Card
                   className="group overflow-hidden hover:shadow-xl transition-all duration-300 animate-slide-up cursor-pointer"

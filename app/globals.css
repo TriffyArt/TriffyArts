@@ -5,18 +5,18 @@
 
 :root {
   /* Updated color palette inspired by the aesthetic portfolio designs */
-  --background: oklch(0.98 0.005 85);
-  --foreground: oklch(0.15 0.02 85);
+  --background: oklch(91.034% 0.00802 114.526);
+  --foreground: oklch(15.999% 0.0042 285.86);
   --card: oklch(0.96 0.008 85);
   --card-foreground: oklch(0.15 0.02 85);
   --popover: oklch(0.98 0.005 85);
   --popover-foreground: oklch(0.15 0.02 85);
-  --primary: oklch(0.25 0.08 160);
+  --primary: oklch(76.292% 0.18263 152.87);
   --primary-foreground: oklch(0.98 0.005 85);
   --secondary: oklch(0.92 0.01 85);
   --secondary-foreground: oklch(0.25 0.08 160);
   --muted: oklch(0.94 0.008 85);
-  --muted-foreground: oklch(0.55 0.02 85);
+  --muted-foreground: oklch(49.291% 0.01773 90.353);
   --accent: oklch(0.88 0.02 85);
   --accent-foreground: oklch(0.25 0.08 160);
   --destructive: oklch(0.577 0.245 27.325);
@@ -42,7 +42,7 @@
 
 .dark {
   /* Dark mode colors with aesthetic navy blue inspiration */
-  --background: oklch(0.08 0.02 240);
+  --background: oklch(14.386% 0.03494 254.609);
   --foreground: oklch(0.92 0.01 85);
   --card: oklch(0.12 0.02 240);
   --card-foreground: oklch(0.92 0.01 85);
@@ -115,6 +115,7 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    transition-timing-function: ease-out;
   }
   body {
     @apply bg-background text-foreground;
@@ -135,6 +136,15 @@
 
   .animate-float {
     animation: float 3s ease-in-out infinite;
+  }
+
+  .arts-lightbox-enter {
+    animation: lightboxEnter 250ms ease-out both;
+  }
+
+  .arts-lightbox-exit {
+    animation: lightboxExit 250ms ease-out both;
+    pointer-events: none;
   }
 
   @keyframes fadeIn {
@@ -168,4 +178,36 @@
       transform: translateY(-10px);
     }
   }
+
+  @keyframes lightboxEnter {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes lightboxExit {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
 }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
