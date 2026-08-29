@@ -107,7 +107,7 @@ export default function AdminPage() {
       const items = uploaded.map((image, index) => ({
         id: `${folderId}-${index + 1}`,
         title: type === "Graphic Design" ? files[index].name.replace(/\.[^/.]+$/, "") : title,
-        description: type === "Graphic Design" ? "" : description,
+        description,
         image,
         category,
         year,
