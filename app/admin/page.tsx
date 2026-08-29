@@ -106,8 +106,8 @@ export default function AdminPage() {
       const normalizedTags = tags.split(",").map((tag) => tag.trim()).filter(Boolean)
       const items = uploaded.map((image, index) => ({
         id: `${folderId}-${index + 1}`,
-        title: files[index].name.replace(/\.[^/.]+$/, ""),
-        description: "",
+        title: type === "Graphic Design" ? files[index].name.replace(/\.[^/.]+$/, "") : title,
+        description: type === "Graphic Design" ? "" : description,
         image,
         category,
         year,
