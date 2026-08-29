@@ -7,8 +7,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Admin authentication required" }, { status: 401 })
   }
 
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
-    return NextResponse.json({ error: "BLOB_READ_WRITE_TOKEN is not configured" }, { status: 500 })
+  if (!process.env.BLOB_READ_WRITE_TOKEN && !process.env.BLOB_STORE_ID) {
+    return NextResponse.json({ error: "Blob storage is not configured" }, { status: 500 })
   }
 
   try {

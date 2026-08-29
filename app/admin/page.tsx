@@ -5,7 +5,7 @@ import { Loader2, LogOut, Upload, X } from "lucide-react"
 
 type Folder = {
   id: string
-  type: "Graphic Design" | "Arts" | "Projects"
+  type: "Graphic Design" | "Arts" | "Projects" | "Crafts"
   title: string
   description: string
   preview: string
@@ -14,14 +14,15 @@ type Folder = {
   client?: string
   projectType?: string
   link?: string
-  items: { id: string; title: string; description: string; image: string; category: string; year: string; tags: string[] }[]
+  items: { id: string; title: string; description: string; image: string; category: string; year: string; tags: string[]; featured?: boolean }[]
 }
 
-const portfolioTypes = ["Graphic Design", "Arts", "Projects"] as const
+const portfolioTypes = ["Graphic Design", "Arts", "Projects", "Crafts"] as const
 const categoriesByType: Record<(typeof portfolioTypes)[number], string[]> = {
   "Graphic Design": ["Social Media", "Public Materials", "Prints"],
   Arts: ["Pixel Art", "Digital Art", "Illustration", "Product Designs"],
   Projects: ["Web Development", "Web Design", "App Design", "UI/UX"],
+  Crafts: ["Artisan Keycap", "Keychain", "Hippers"],
 }
 
 export default function AdminPage() {
@@ -37,6 +38,7 @@ export default function AdminPage() {
   const [client, setClient] = useState("")
   const [projectType, setProjectType] = useState("")
   const [link, setLink] = useState("")
+  const [featured, setFeatured] = useState(false)
   const [files, setFiles] = useState<File[]>([])
   const [filePreviews, setFilePreviews] = useState<string[]>([])
   const [message, setMessage] = useState("")
@@ -110,6 +112,7 @@ export default function AdminPage() {
         category,
         year,
         tags: normalizedTags,
+        featured,
       }))
       const response = await fetch("/api/portfolio", {
         method: "POST",
@@ -127,6 +130,7 @@ export default function AdminPage() {
       setLink("")
       setFiles([])
       setFilePreviews([])
+      setFeatured(false)
       setMessage("Post published")
       await loadFolders()
     } catch (error) {
@@ -173,7 +177,7 @@ export default function AdminPage() {
       <div className="mb-10 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-semibold">Portfolio Admin</h1>
-          <p className="mt-2 text-muted-foreground">Upload posts for Arts, Projects, and Graphic Design.</p>
+          <p className="mt-2 text-muted-foreground">Upload posts for Arts, Projects, Graphic Design, and Crafts.</p>
         </div>
         <button onClick={logout} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
           <LogOut className="h-4 w-4" /> Log out
@@ -201,6 +205,10 @@ export default function AdminPage() {
         </select>
         <input value={year} onChange={(event) => setYear(event.target.value)} placeholder="Year" className="h-10 rounded-md border border-input bg-background px-3 text-sm" required />
           <input value={tags} onChange={(event) => setTags(event.target.value)} placeholder="Tags, separated by commas" className="h-10 rounded-md border border-input bg-background px-3 text-sm sm:col-span-2" />
+        <label className="flex items-center gap-2 text-sm sm:col-span-2">
+          <input type="checkbox" checked={featured} onChange={(event) => setFeatured(event.target.checked)} className="h-4 w-4 rounded border-input" />
+          Feature on homepage
+        </label>
         {type === "Projects" && (
           <>
             <input value={client} onChange={(event) => setClient(event.target.value)} placeholder="Client" className="h-10 rounded-md border border-input bg-background px-3 text-sm" required />
@@ -256,6 +264,9 @@ export default function AdminPage() {
               <p className="truncate font-medium">{folder.title}</p>
               <p className="text-sm text-muted-foreground">{folder.type} · {folder.items.length} designs · {folder.category}</p>
             </div>
+            {folder.items.some((item) => item.featured) && (
+              <span className="shrink-0 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">Featured</span>
+            )}
           </div>
         ))}
       </section>

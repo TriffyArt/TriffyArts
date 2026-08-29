@@ -3,13 +3,45 @@ import { Card } from "@/components/ui/card"
 import { ArrowRight, Palette, Code, Camera, Sparkles, Figma, HandMetal, LucideBrush, Crop } from "lucide-react"
 import Link from "next/link"
 import type { Metadata } from "next"
+import { getFeaturedWorks, readPortfolioFolders } from "@/lib/portfolio-data"
 
 export const metadata: Metadata = {
   title: 'Home',
   description: 'Welcome to Psalm Salcedo\'s portfolio. Creative artist and designer crafting beautiful digital experiences through art, design, and creative storytelling.',
 }
 
-export default function HomePage() {
+// Refresh on every request so admin-marked "featured" posts show up immediately.
+export const dynamic = "force-dynamic"
+
+const fallbackFeaturedWorks = [
+  {
+    id: "1",
+    image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Welcome2025.gif",
+    title: "Welcome 2025",
+    category: "Pixel Art",
+    href: "/arts?id=1",
+  },
+  {
+    id: "2",
+    image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Pizza.gif",
+    title: "Cheesy Pizza",
+    category: "Pixel Art",
+    href: "/arts?id=2",
+  },
+  {
+    id: "3",
+    image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/robotik.gif",
+    title: "Robotik",
+    category: "Pixel Art",
+    href: "/arts?id=3",
+  },
+]
+
+export default async function HomePage() {
+  const folders = await readPortfolioFolders().catch(() => [])
+  const remoteFeaturedWorks = getFeaturedWorks(folders)
+  const featuredWorks = remoteFeaturedWorks.length > 0 ? remoteFeaturedWorks : fallbackFeaturedWorks
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -113,27 +145,8 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {([
-              {
-                image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Welcome2025.gif",
-                title: "Welcome 2025",
-                category: "Pixel Art",
-                artId: 1,
-              },
-              {
-                image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Pizza.gif",
-                title: "Cheesy Pizza",
-                category: "Pixel Art",
-                artId: 2,
-              },
-              {
-                image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/robotik.gif",
-                title: "Robotik",
-                category: "Pixel Art",
-                artId: 3,
-              },
-            ]).map((project, index) => (
-              <Link href={`/arts?id=${project.artId}`} key={project.title}>
+            {featuredWorks.map((project, index) => (
+              <Link href={project.href} key={project.id}>
                 <Card
                   className="group overflow-hidden hover:shadow-xl transition-all duration-300 animate-slide-up cursor-pointer"
                   style={{ animationDelay: `${index * 150}ms` }}
@@ -151,7 +164,7 @@ export default function HomePage() {
                   </div>
                   <div className="p-4">
                     <h3 className="font-semibold mb-2">{project.title}</h3>
-                    <p className="text-sm text-muted-foreground">{project.category} • 2024</p>
+                    <p className="text-sm text-muted-foreground">{project.category}</p>
                   </div>
                 </Card>
               </Link>

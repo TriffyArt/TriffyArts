@@ -42,7 +42,7 @@
 
 .dark {
   /* Dark mode colors with aesthetic navy blue inspiration */
-  --background: oklch(14.386% 0.03494 254.609);
+  --background: oklch(11.288% 0.0249 251.492);
   --foreground: oklch(0.92 0.01 85);
   --card: oklch(0.12 0.02 240);
   --card-foreground: oklch(0.92 0.01 85);

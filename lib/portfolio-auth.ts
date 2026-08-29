@@ -4,6 +4,22 @@ import { cookies } from "next/headers"
 const COOKIE_NAME = "portfolio_admin"
 const TOKEN_TTL_SECONDS = 60 * 60 * 24 * 7
 
+// Best-effort in-memory brute-force guard; resets whenever the serverless instance recycles.
+const LOGIN_ATTEMPT_LIMIT = 5
+const LOGIN_ATTEMPT_WINDOW_MS = 60_000
+const loginAttempts = new Map<string, { count: number; resetAt: number }>()
+
+export function isLoginRateLimited(key: string) {
+  const now = Date.now()
+  const entry = loginAttempts.get(key)
+  if (!entry || entry.resetAt < now) {
+    loginAttempts.set(key, { count: 1, resetAt: now + LOGIN_ATTEMPT_WINDOW_MS })
+    return false
+  }
+  entry.count += 1
+  return entry.count > LOGIN_ATTEMPT_LIMIT
+}
+
 function getSecret() {
   return process.env.PORTFOLIO_ADMIN_SECRET
 }

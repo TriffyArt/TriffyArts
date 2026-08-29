@@ -9,237 +9,60 @@ import { title } from "process"
 import { Description } from "@radix-ui/react-toast"
 import { useSearchParams } from "next/navigation"
 
-const artworks = [
-	{
-		id: 1,
-		title: "Welcome 2025",
-		description:
-			"Pixel Art piece symbolizing the dawn of a new year, blending vibrant colors and abstract forms to evoke a sense of hope and renewal.",
-		image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Welcome2025.gif",
-		category: "Pixel Art",
-		medium: "Digital Pixel Art",
-		dimensions: "960x560px",
-		year: "2025",
-		tags: ["Pixel Art", "New Year", "Abstract"],
-		featured: true,
-	},
-	{
-		id: 2,
-		title: "Cheesy Pizza",
-		description:
-			"A fun and colorful pixel art illustration of a delicious cheesy pizza slice, capturing the gooey texture and vibrant toppings in a playful style.",
-		image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Pizza.gif",
-		category: "Pixel Art",
-		medium: "Digital Pixel Art Illustration",
-		dimensions: "672x672px",
-		year: "2024",
-		tags: ["Pixel Art", "Food", "Fun"],
-		featured: true,
-	},
-	{
-		id: 3,
-		title: "Robotik",
-		description:
-			"just a robotik Pixel Artwork exploring isometric Features within a character design.",
-		image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/robotik.gif",
-		category: "Pixel Art",
-		medium: "Digital Pixel Art",
-		dimensions: "2500x3500px",
-		year: "2024",
-		tags: ["Robot", "Isometric", "Character Design"],
-		featured: true,
-	},
-	{
-		id: 4,
-		title: "Back to School",
-		description:
-			"back to school themed artwork featuring geometric shapes and a vibrant color palette, for pixil art competition.",
-		image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/BacktoSchoolEntry.png",
-		category: "Pixel Art",
-		medium: "pixel art",
-		dimensions: "3680x1790px",
-		year: "2024",
-		tags: ["School", "Geometric", "Vibrant"],
-		featured: false,
-	},
-	{
-		id: 5,
-		title: "Scepter",
-		description:
-			"Scepter symbolizing mystical power and authority.",
-		image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Scepter.png",
-		category: "Pixel Art",
-		medium: "pixel art",
-		dimensions: "756x1368px",
-		year: "2024",
-		tags: ["Mystical", "Power", "Authority"],
-		featured: false,
-	},
-	{
-		id: 6,
-		title: "Darkmode Shadows #1",
-		description:
-			"Phone wallpaper pixel artwork showcasing dark shadows colors.",
-		image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Darkmode1.png",
-		category: "Pixel Art",
-		medium: "Pixel Art",
-		dimensions: "1120x1750px",
-		year: "2024",
-		tags: ["pixel art", "phome wallpaper", "dark mode"],
-		featured: false,
-	},
-	{
-		id: 7,
-		title: "Darkmode Shadows #2",
-		description:
-			"Phone wallpaper pixel artwork showcasing dark shadows colors.",
-		image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Darkmode2.png",
-		category: "Pixel Art",
-		medium: "Pixel Art",
-		dimensions: "1120x1750px",
-		year: "2024",
-		tags: ["pixel art", "phome wallpaper", "dark mode"],
-		featured: false,
-	},
-	{
-		id: 8,
-		title: "Darkmode Shadows #3",
-		description:
-			"Phone wallpaper pixel artwork showcasing dark shadows colors.",
-		image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Darkmode3.png",
-		category: "Pixel Art",
-		medium: "Pixel Art",
-		dimensions: "1120x1750px",
-		year: "2024",
-		tags: ["pixel art", "phome wallpaper", "dark mode"],
-		featured: false,
-	},
-	{
-		id: 9,
-		title: "Darkmode Shadows #4",
-		description:
-			"Phone wallpaper pixel artwork showcasing dark shadows colors.",
-		image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Darkmode4.png",
-		category: "Pixel Art",
-		medium: "Pixel Art",
-		dimensions: "1120x1750px",
-		year: "2024",
-		tags: ["pixel art", "phome wallpaper", "dark mode"],
-		featured: false,
-	},
-	{
-		id: 10,
-		title: "Darkmode Shadows #5",
-		description:
-			"Phone wallpaper pixel artwork showcasing dark shadows colors.",
-		image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Darkmode5.png",
-		category: "Pixel Art",
-		medium: "Pixel Art",
-		dimensions: "1120x1750px",
-		year: "2024",
-		tags: ["pixel art", "phome wallpaper", "dark mode"],
-		featured: false,
-	},
-	{
-		id: 11,
-		title: "Darkmode Shadows #6",
-		description:
-			"Phone wallpaper pixel artwork showcasing dark shadows colors.",
-		image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Darkmode6.png",
-		category: "Pixel Art",
-		medium: "Pixel Art",
-		dimensions: "1120x1750px",
-		year: "2024",
-		tags: ["pixel art", "phome wallpaper", "dark mode"],
-		featured: false,
-	},
-	{
-		id: 12,
-		title: "Darkmode Shadows #7",
-		description:
-			"Phone wallpaper pixel artwork showcasing dark shadows colors.",
-		image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Darkmode7.png",
-		category: "Pixel Art",
-		medium: "Pixel Art",
-		dimensions: "1120x1750px",
-		year: "2024",
-		tags: ["pixel art", "phome wallpaper", "dark mode"],
-		featured: false,
-	},
-	{
-		id: 14,
-		title: "Rust Character Full White out kit",
-		Description: 
-			"Rust Game Character Wearing a full white out kit, used in discord sticker and vector asset",
-		image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/DG1.png",
-		category: "Digital Art",
-		medium: "Digital Art",
-		dimension: "960x540px",
-		year: "2025",
-		tags: ["Digital Art","Game Character Art","Vector Asset"],
-		featured: false,
-	},
-	{
-		id: 15,
-		title: "Pixel House on Christmas",
-		Description: 
-			"Pixel art house decorated for christmas, used in Capcut Pro stickers",
-		image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Pixel%20House.gif",
-		category: "Pixel Art",
-		medium: "Pixel Art",
-		dimension: "610x400px",
-		year: "2025",
-		tags: ["Pixel Art","Christmas","GIF Sticker"],
-		featured: false,
-	},
-	{
-		id: 16,
-		title: "Pixel Mochi Santa",
-		Description: 
-			"Pixel art mochi character dressed in santa hat, used in Capcut Pro stickers",
-		image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Mochi%20Santa%20Christmas%20EN.gif",
-		category: "Pixel Art",
-		medium: "Pixel Art",
-		dimension: "800x800px",
-		year: "2025",
-		tags: ["Pixel Art","Christmas","GIF Sticker"],
-		featured: false,
-	},
-	{
-		id: 17,
-		title: "Pixel Snowball Santa",
-		Description: 
-			"Pixel art Snowball character dressed in santa hat, used in Capcut Pro stickers",
-		image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Snowball%20Santa%20Christmas%20EN.gif",
-		category: "Pixel Art",
-		medium: "Pixel Art",
-		dimension: "800x800px",
-		year: "2025",
-		tags: ["Pixel Art","Christmas","GIF Sticker"],
-		featured: false,
-	},
-	{
-		id: 18,
-		title: "Pixel Snowman",
-		Description: 
-			"Pixel art Snowman character dressed for winter, used in Capcut Pro stickers",
-		image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Snowman%20Christmas%20EN.gif",
-		category: "Pixel Art",
-		medium: "Pixel Art",
-		dimension: "800x800px",
-		year: "2025",
-		tags: ["Pixel Art","Christmas","GIF Sticker"],
-		featured: false,
-	},
-]
+
 
 const categories = ["All","Pixel Art", "Digital Art", "Illustration","Product Designs"]
+
+type Artwork = {
+	id: string
+	title: string
+	description: string
+	image: string
+	category: string
+	medium: string
+	dimensions: string
+	year: string
+	tags: string[]
+	featured: boolean
+}
 
 function ArtsContent() {
 	const [selectedCategory, setSelectedCategory] = useState("All")
 	const [viewMode, setViewMode] = useState<"grid" | "masonry">("masonry")
+	const [artworks, setArtworks] = useState<Artwork[]>([])
 
 	const searchParams = useSearchParams()
+
+	// Load admin-uploaded "Arts" folders from the portfolio API
+	useEffect(() => {
+		fetch("/api/portfolio", { cache: "no-store" })
+			.then((response) => (response.ok ? response.json() : null))
+			.then((data) => {
+				type PortfolioFolder = {
+					type?: string
+					items: { id: string; title: string; description: string; image: string; category: string; year: string; tags: string[] }[]
+				}
+				const folders = (data?.folders ?? []) as PortfolioFolder[]
+				const remoteArtworks: Artwork[] = folders
+					.filter((folder) => folder.type === "Arts")
+					.flatMap((folder) =>
+						folder.items.map((item) => ({
+							id: item.id,
+							title: item.title,
+							description: item.description,
+							image: item.image,
+							category: item.category,
+							medium: item.category,
+							dimensions: "",
+							year: item.year,
+							tags: item.tags,
+							featured: false,
+						})),
+					)
+				setArtworks(remoteArtworks)
+			})
+			.catch(() => undefined)
+	}, [])
 
 	// Lightbox state (index-based)
 	const [modalOpen, setModalOpen] = useState(false)
@@ -257,7 +80,7 @@ function ArtsContent() {
 	useEffect(() => {
 		const artId = searchParams?.get('id')
 		if (artId) {
-			const index = artworks.findIndex(art => art.id === parseInt(artId))
+			const index = artworks.findIndex(art => art.id === artId)
 			if (index !== -1) {
 				openModalByIndex(index)
 			}
@@ -322,6 +145,7 @@ function ArtsContent() {
 				</section>
 
 				{/* Featured Artworks */}
+				{featuredArtworks.length > 0 && (
 				<section className="mb-16 animate-slide-up">
 					<div className="flex items-center gap-2 mb-8">
 						<Sparkles className="h-5 w-5 text-primary" />
@@ -371,6 +195,7 @@ function ArtsContent() {
 						))}
 					</div>
 				</section>
+				)}
 
 				{/* Filter Controls */}
 				<section className="mb-12 animate-slide-up">

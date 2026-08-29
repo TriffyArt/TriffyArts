@@ -13,93 +13,33 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 
-const designWorks = [
-  {
-    id: 1,
-    type: "Graphic Design" as const,
-    title: "Pinoy Vanilla Rust 2X",
-    description:
-      "A bold promotional graphic created for a public-facing campaign, combining illustrated character work with strong display typography.",
-    image: "/GD1.png",
-    category: "Public Materials",
-    year: "2025",
-    tags: ["Illustration", "Typography", "Campaign"],
-  },
-  {
-    id: 2,
-    title: "Event Announcement Post",
-    description:
-      "A sample social announcement design from the same event campaign.",
-    image: "/GD1.png",
-    category: "Public Materials",
-    year: "2025",
-    tags: ["Social Media", "Announcement"],
-  },
-  {
-    id: 3,
-    title: "Event Information Print",
-    description:
-      "A sample print-ready information layout included in the campaign folder.",
-    image: "/GD1.png",
-    category: "Public Materials",
-    year: "2025",
-    tags: ["Print", "Information Design"],
-  },
-]
+type DesignItem = {
+  id: string
+  title: string
+  description: string
+  image: string
+  category: string
+  year: string
+  tags: string[]
+}
 
-const socialMediaWorks = [
-  {
-    id: 4,
-    title: "Event Launch Post",
-    description:
-      "A square social media graphic announcing the launch of a community event.",
-    image: "/GD1.png",
-    category: "Social Media",
-    year: "2025",
-    tags: ["Instagram", "Announcement"],
-  },
-  {
-    id: 5,
-    title: "Event Reminder Story",
-    description:
-      "A vertical story layout reminding followers about the event schedule.",
-    image: "/GD1.png",
-    category: "Social Media",
-    year: "2025",
-    tags: ["Instagram Story", "Promotion"],
-  },
-]
-
-const designFolders = [
-  {
-    id: 1,
-    type: "Graphic Design" as const,
-    title: "Rust Server Event Campaign",
-    description:
-      "A compiled collection of promotional graphics created for the Pinoy Vanilla Rust 2X event.",
-    preview: "/GD1.png",
-    category: "Public Materials",
-    year: "2025",
-    items: designWorks,
-  },
-  {
-    id: 2,
-    title: "Community Event Social Kit",
-    description:
-      "A sample social media package with launch and reminder graphics for a community event.",
-    preview: "/GD1.png",
-    category: "Social Media",
-    year: "2025",
-    items: socialMediaWorks,
-  },
-]
+type DesignFolder = {
+  id: string
+  type?: "Graphic Design"
+  title: string
+  description: string
+  preview: string
+  category: string
+  year: string
+  items: DesignItem[]
+}
 
 const categories = ["All", "Social Media", "Public Materials", "Prints"]
 
 export default function GraphicDesignPage() {
   const [selectedCategory, setSelectedCategory] = useState("All")
-  const [folders, setFolders] = useState(designFolders)
-  const [selectedFolder, setSelectedFolder] = useState<(typeof designFolders)[number] | null>(null)
+  const [folders, setFolders] = useState<DesignFolder[]>([])
+  const [selectedFolder, setSelectedFolder] = useState<DesignFolder | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [selectedItemIndex, setSelectedItemIndex] = useState(0)
 
@@ -107,14 +47,13 @@ export default function GraphicDesignPage() {
     fetch("/api/portfolio", { cache: "no-store" })
       .then((response) => (response.ok ? response.json() : null))
       .then((data) => {
-        if (data?.folders?.length) {
-          setFolders(data.folders.filter((folder: { type?: string }) => !folder.type || folder.type === "Graphic Design"))
-        }
+        const allFolders = (data?.folders ?? []) as DesignFolder[]
+        setFolders(allFolders.filter((folder) => !folder.type || folder.type === "Graphic Design"))
       })
       .catch(() => undefined)
   }, [])
 
-  const openFolder = (folder: (typeof designFolders)[number]) => {
+  const openFolder = (folder: DesignFolder) => {
     setSelectedFolder(folder)
     setSelectedItemIndex(0)
     setDialogOpen(true)
@@ -132,12 +71,54 @@ export default function GraphicDesignPage() {
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ProfessionalService",
+              name: "Psalm Salcedo - Graphic Designer in Albay",
+              description:
+                "Freelance graphic design services based in Albay, Philippines, serving local clients in person and international clients remotely — social media graphics, public materials, and print design.",
+              url: "https://triffyarts.vercel.app/graphic-design",
+              image: "https://triffyarts.vercel.app/GD1.png",
+              priceRange: "$$",
+              areaServed: [
+                {
+                  "@type": "State",
+                  name: "Albay",
+                },
+                {
+                  "@type": "Place",
+                  name: "Worldwide (remote)",
+                },
+              ],
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: "Legazpi",
+                addressRegion: "Albay",
+                addressCountry: "PH",
+              },
+              founder: {
+                "@type": "Person",
+                name: "Psalm Salcedo",
+              },
+              sameAs: [
+                "https://twitter.com/psalmsalcedo",
+                "https://instagram.com/psalmsalcedo",
+                "https://github.com/psalmsalcedo",
+              ],
+            }),
+          }}
+        />
         <section className="text-center mb-16 animate-fade-in">
           <h1 className="text-4xl sm:text-5xl font-bold mb-6 text-balance">
-            Graphic <span className="text-primary">Design</span>
+            Graphic Designer in <span className="text-primary">Albay</span>, Available Worldwide
           </h1>
           <p className="text-xl text-muted-foreground text-balance max-w-3xl mx-auto">
-            Visual work made for social media, public materials, and print.
+            Freelance graphic design services based in Legazpi, Albay — social media graphics, public
+            materials, and print design for local businesses across the Bicol Region, plus remote
+            design work for international clients anywhere in the world.
           </p>
         </section>
 
