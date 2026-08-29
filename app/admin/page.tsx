@@ -43,6 +43,9 @@ export default function AdminPage() {
   const [filePreviews, setFilePreviews] = useState<string[]>([])
   const [message, setMessage] = useState("")
   const [busy, setBusy] = useState(false)
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   const loadFolders = async () => {
     const response = await fetch("/api/portfolio", { cache: "no-store" })
@@ -144,6 +147,35 @@ export default function AdminPage() {
     await fetch("/api/admin", { method: "DELETE" })
     setAuthenticated(false)
     setFolders([])
+  }
+
+  const toggleSelected = (id: string) => {
+    setSelectedIds((current) => {
+      const next = new Set(current)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  const deleteSelected = async () => {
+    setDeleting(true)
+    try {
+      const response = await fetch("/api/portfolio", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: Array.from(selectedIds) }),
+      })
+      if (!response.ok) throw new Error("Could not delete selected posts")
+      setFolders((current) => current.filter((folder) => !selectedIds.has(folder.id)))
+      setSelectedIds(new Set())
+      setMessage("Selected posts deleted")
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not delete selected posts")
+    } finally {
+      setDeleting(false)
+      setConfirmingDelete(false)
+    }
   }
 
   if (!authenticated) {
@@ -256,11 +288,29 @@ export default function AdminPage() {
       </form>
 
       <section className="mt-10 space-y-3">
-        <h2 className="text-lg font-semibold">Published posts</h2>
-        <p className="text-sm text-muted-foreground">Posts can be removed from your Vercel Blob dashboard only.</p>
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-lg font-semibold">Published posts</h2>
+          {selectedIds.size > 0 && (
+            <button
+              type="button"
+              onClick={() => setConfirmingDelete(true)}
+              className="rounded-md bg-destructive px-3 py-1.5 text-sm text-destructive-foreground"
+            >
+              Delete selected ({selectedIds.size})
+            </button>
+          )}
+        </div>
+        <p className="text-sm text-muted-foreground">Select posts and delete them directly, or remove them from your Vercel Blob dashboard.</p>
         {folders.map((folder) => (
-          <div key={folder.id} className="flex items-center justify-between gap-4 border border-border p-4">
-            <div className="min-w-0">
+          <div key={folder.id} className="flex items-center gap-4 border border-border p-4">
+            <input
+              type="checkbox"
+              checked={selectedIds.has(folder.id)}
+              onChange={() => toggleSelected(folder.id)}
+              aria-label={`Select ${folder.title}`}
+              className="h-4 w-4 shrink-0 rounded border-input"
+            />
+            <div className="min-w-0 flex-1">
               <p className="truncate font-medium">{folder.title}</p>
               <p className="text-sm text-muted-foreground">{folder.type} · {folder.items.length} designs · {folder.category}</p>
             </div>
@@ -270,6 +320,41 @@ export default function AdminPage() {
           </div>
         ))}
       </section>
+
+      {confirmingDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" role="dialog" aria-modal="true">
+          <div className="w-full max-w-md space-y-4 border border-border bg-background p-6">
+            <h3 className="text-lg font-semibold">Delete {selectedIds.size} post{selectedIds.size === 1 ? "" : "s"}?</h3>
+            <p className="text-sm text-muted-foreground">
+              This permanently removes the selected post{selectedIds.size === 1 ? "" : "s"} from Blob storage. This cannot be undone.
+            </p>
+            <ul className="max-h-40 list-disc space-y-1 overflow-y-auto pl-5 text-sm text-muted-foreground">
+              {folders.filter((folder) => selectedIds.has(folder.id)).map((folder) => (
+                <li key={folder.id} className="truncate">{folder.title}</li>
+              ))}
+            </ul>
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setConfirmingDelete(false)}
+                disabled={deleting}
+                className="rounded-md border border-input px-4 py-2 text-sm disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={deleteSelected}
+                disabled={deleting}
+                className="flex items-center gap-2 rounded-md bg-destructive px-4 py-2 text-sm text-destructive-foreground disabled:opacity-50"
+              >
+                {deleting && <Loader2 className="h-4 w-4 animate-spin" />}
+                Delete permanently
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   )
 }
