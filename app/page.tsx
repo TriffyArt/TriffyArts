@@ -3,32 +3,66 @@ import { Card } from "@/components/ui/card"
 import { ArrowRight, Palette, Code, Camera, Sparkles, Figma, HandMetal, LucideBrush, Crop } from "lucide-react"
 import Link from "next/link"
 import type { Metadata } from "next"
+import { getFeaturedWorks, readPortfolioFolders } from "@/lib/portfolio-data"
 
 export const metadata: Metadata = {
   title: 'Home',
   description: 'Welcome to Psalm Salcedo\'s portfolio. Creative artist and designer crafting beautiful digital experiences through art, design, and creative storytelling.',
 }
 
-export default function HomePage() {
+// Refresh on every request so admin-marked "featured" posts show up immediately.
+export const dynamic = "force-dynamic"
+
+const fallbackFeaturedWorks = [
+  {
+    id: "1",
+    image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Welcome2025.gif",
+    title: "Welcome 2025",
+    category: "Pixel Art",
+    href: "/arts?id=1",
+  },
+  {
+    id: "2",
+    image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Pizza.gif",
+    title: "Cheesy Pizza",
+    category: "Pixel Art",
+    href: "/arts?id=2",
+  },
+  {
+    id: "3",
+    image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/robotik.gif",
+    title: "Robotik",
+    category: "Pixel Art",
+    href: "/arts?id=3",
+  },
+]
+
+export default async function HomePage() {
+  const folders = await readPortfolioFolders().catch(() => [])
+  const remoteFeaturedWorks = getFeaturedWorks(folders)
+  const featuredWorks = remoteFeaturedWorks.length > 0 ? remoteFeaturedWorks : fallbackFeaturedWorks
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center animate-fade-in">
+      <section
+        className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 bg-cover bg-center"
+        style={{ backgroundImage: "url('/hero-background.png')" }}
+      >
+        <div className="absolute inset-0 bg-background/20 dark:bg-background/70" />
+
+        <div className="relative z-10 w-full lg:w-auto max-w-4xl mr-0 lg:mr-100 text-center lg:text-left animate-fade-in">
           <div className="mb-8">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-primary/10 rounded-full mb-6 animate-float">
-              <Palette className="w-10 h-10 text-primary" />
-            </div>
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-balance mb-6">
               Creative <span className="text-primary">Artist</span>
               <br />& Designer
             </h1>
-            <p className="text-xl sm:text-2xl text-muted-foreground text-balance max-w-2xl mx-auto mb-8">
+            <p className="text-xl sm:text-2xl text-muted-foreground text-balance max-w-2xl mx-auto mb-8 text-white">
               Crafting beautiful digital experiences through art, design, and creative storytelling
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center">
             <Button asChild size="lg" className="group">
               <Link href="/projects">
                 View My Work
@@ -58,7 +92,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            {[
+            {([
               {
                 icon: Palette,
                 title: "Digital Art",
@@ -83,7 +117,7 @@ export default function HomePage() {
                 description: "Handcrafted polymer clay keychains and artisan pieces made with care",
                 color: "text-purple-500",
               },
-            ].map((service, index) => (
+            ]).map((service, index) => (
               <Card
                 key={service.title}
                 className="p-6 hover:shadow-lg transition-all duration-300 animate-slide-up group"
@@ -111,27 +145,8 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Welcome2025.gif",
-                title: "Welcome 2025",
-                category: "Pixel Art",
-                artId: 1,
-              },
-              {
-                image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Pizza.gif",
-                title: "Cheesy Pizza",
-                category: "Pixel Art",
-                artId: 2,
-              },
-              {
-                image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/robotik.gif",
-                title: "Robotik",
-                category: "Pixel Art",
-                artId: 3,
-              },
-            ].map((project, index) => (
-              <Link href={`/arts?id=${project.artId}`} key={project.title}>
+            {featuredWorks.map((project, index) => (
+              <Link href={project.href} key={project.id}>
                 <Card
                   className="group overflow-hidden hover:shadow-xl transition-all duration-300 animate-slide-up cursor-pointer"
                   style={{ animationDelay: `${index * 150}ms` }}
@@ -149,7 +164,7 @@ export default function HomePage() {
                   </div>
                   <div className="p-4">
                     <h3 className="font-semibold mb-2">{project.title}</h3>
-                    <p className="text-sm text-muted-foreground">{project.category} • 2024</p>
+                    <p className="text-sm text-muted-foreground">{project.category}</p>
                   </div>
                 </Card>
               </Link>

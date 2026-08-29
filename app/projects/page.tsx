@@ -4,99 +4,76 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ExternalLink, Github, Calendar, Filter } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
-const projects = [
-	{
-		id: 1,
-		title: "Inventory Management System",
-		description:
-			"A comprehensive web application designed to streamline inventory tracking and management for small to medium-sized businesses. Features include real-time stock updates, order processing, and reporting tools. with multiple warehouses support.",
-		image: "/InvenTrack.png",
-		category: "Web Development",
-		tags: ["Web Design", "UI/UX", "React.js", "Inventory System"],
-		year: "2024",
-    	client: "Self-Initiated",
-    	ProjectType: "School Project",
-		link: "https://github.com/TriffyArt/Inventory-Management-System",
-		github: "https://github.com/TriffyArt/Inventory-Management-System",
-	},
-	{
-		id: 2,
-		title: "FoodPanda Clone UI/UX Design",
-		description:
-			"A user-friendly and visually appealing UI/UX design for a food delivery application, inspired by FoodPanda. The design focuses on intuitive navigation, vibrant visuals, and seamless user interactions to enhance the overall user experience.",
-		image: "/FPclone.png",
-		category: ["App Design"],
-		tags: ["Web Design", "UI/UX", "React.js", "Inventory System"],
-		year: "2024",
-    	client: "Self-Initiated",
-    	ProjectType: "Self Project",
-		link: "https://www.figma.com/community/file/1572867449289424978/foodpanda-ui-ux-design",
-	},
-	{
-		id: 3,
-		title: "Horizontal Card Carousel Slider",
-		description:
-			"a sleek and interactive horizontal card carousel slider designed to showcase content in an engaging manner. Perfect for portfolios, product displays, or featured articles, this design emphasizes smooth transitions and user-friendly navigation.",
-		image: "/Slider.png",
-		category: ["UI/UX"],
-		tags: ["Web Design", "UI/UX", "Figma"],
-		year: "2025",
-    	client: "Self-Initiated",
-    	ProjectType: "Self Project",
-		link: "https://www.figma.com/community/file/1584093410014962661/horizontal-card-carousel-slider",
-	},
-	{
-		id: 4,
-		title: "DWPHxDWGlobal2025 Competition Landing Page Design",
-		description:
-			"A modern and visually captivating landing page design for the DWPHxDWGlobal2025 competition. The design highlights key information about the company, encourages user engagement, and provides a seamless experience for visitors interested in participating or learning more about the competition.",
-		image: "/DWPHCover.jpg",
-		category: ["UI/UX"],
-		tags: ["Web Design", "UI/UX", "Figma"],
-		year: "2025",
-    	client: "Digital Workforce Group PH x Global",
-    	ProjectType: "Competition Project",
-		link: "https://www.figma.com/proto/89RwA1jwEuO7B33kktyrN9/Psalm-Zyhrone-M.-Salcedo_DWPHxDWGlobal2025",
-	},
-		{
-		id: 5,
-		title: "YearnSafe - Share anonymously, feel deeply",
-		description:
-			"The music-backed anonymous wall for people who need to say it with a song. Share a feeling, browse the feed, and support the community.",
-		image: "/yearnsafe.png",
-		category: ["web development"],
-		tags: ["web development", "react.js", "next.js", "tailwindcss"],
-		year: "2026",
-    	client: "self-initiated",
-    	ProjectType: "self project",
-		link: "https://yearnsafe.vercel.app",
-	},
-]
+type PortfolioFolder = {
+	id: string
+	type?: string
+	title: string
+	description: string
+	preview: string
+	category: string
+	year: string
+	client?: string
+	projectType?: string
+	link?: string
+	items: { tags: string[] }[]
+}
+
+type Project = {
+	id: string
+	title: string
+	description: string
+	image: string
+	category: string
+	tags: string[]
+	year: string
+	client?: string
+	projectType?: string
+	link?: string
+	github?: string
+}
 
 const categories = [
 	"All",
-	"Branding",
 	"Web Design",
 	"App Design",
-	"Digital Art",
-	"Packaging",
 	"Web Development",
 	"UI/UX",
 ]
 
 export default function ProjectsPage() {
 	const [selectedCategory, setSelectedCategory] = useState("All")
+	const [projects, setProjects] = useState<Project[]>([])
+
+	useEffect(() => {
+		fetch("/api/portfolio", { cache: "no-store" })
+			.then((response) => (response.ok ? response.json() : null))
+			.then((data) => {
+				const folders = (data?.folders ?? []) as PortfolioFolder[]
+				const mapped = folders
+					.filter((folder) => folder.type === "Projects")
+					.map((folder) => ({
+						id: folder.id,
+						title: folder.title,
+						description: folder.description,
+						image: folder.preview,
+						category: folder.category,
+						tags: Array.from(new Set(folder.items.flatMap((item) => item.tags))),
+						year: folder.year,
+						client: folder.client,
+						projectType: folder.projectType,
+						link: folder.link,
+					}))
+				setProjects(mapped)
+			})
+			.catch(() => undefined)
+	}, [])
 
 	const filteredProjects =
 		selectedCategory === "All"
 			? projects
-			: projects.filter((project) =>
-				Array.isArray(project.category)
-					? project.category.includes(selectedCategory)
-					: project.category === selectedCategory
-			)
+			: projects.filter((project) => project.category === selectedCategory)
 
 	return (
 		<div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
@@ -200,7 +177,7 @@ export default function ProjectsPage() {
 								<div className="p-6">
 									<div className="flex items-center justify-between mb-3">
 										<Badge variant="secondary" className="text-xs">
-											{Array.isArray(project.category) ? project.category.join(", ") : project.category}
+											{project.category}
 										</Badge>
 										<div className="flex items-center gap-1 text-xs text-muted-foreground">
 											<Calendar className="h-3 w-3" />
@@ -238,7 +215,7 @@ export default function ProjectsPage() {
 									</div>
                   <div className="mt-4 pt-4 border-t border-border">
 										<p className="text-xs text-muted-foreground">
-                      <span className="font-medium">Project:</span> {project.ProjectType}
+                      <span className="font-medium">Project:</span> {project.projectType}
 										</p>
 									</div>
 								</div>
