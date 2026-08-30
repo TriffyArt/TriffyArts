@@ -116,7 +116,7 @@ export default function GraphicDesignPage() {
             Graphic Designer in <span className="text-primary">Albay</span>, Available Worldwide
           </h1>
           <p className="text-xl text-muted-foreground text-balance max-w-3xl mx-auto">
-            Freelance graphic design services based in Legazpi, Albay. Social media graphics, public
+            Freelance graphic design services based in Legazpi, Albay — social media graphics, public
             materials, and print design for local businesses across the Bicol Region, plus remote
             design work for international clients anywhere in the world.
           </p>
