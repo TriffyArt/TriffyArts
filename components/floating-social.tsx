@@ -1,6 +1,6 @@
 "use client"
 
-import { Github, Coffee, Facebook, Instagram, ChevronUp, ChevronDown } from "lucide-react"
+import { Github, Linkedin, Facebook, Instagram, ChevronUp, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
 
@@ -13,11 +13,11 @@ const socialLinks = [
     hoverBg: "hover:bg-gray-100 dark:hover:bg-gray-800",
   },
   {
-    name: "Ko-fi",
-    href: "https://ko-fi.com/triffyart",
-    icon: Coffee,
-    color: "hover:text-orange-500",
-    hoverBg: "hover:bg-orange-50 dark:hover:bg-orange-950",
+    name: "LinkedIn",
+    href: "https://www.linkedin.com/in/psalmsalcedo/",
+    icon: Linkedin,
+    color: "hover:text-blue-700",
+    hoverBg: "hover:bg-blue-50 dark:hover:bg-blue-950",
   },
   {
     name: "Facebook",
@@ -40,6 +40,8 @@ export function FloatingSocial() {
   const [isVisible, setIsVisible] = useState(true)
 
   useEffect(() => {
+    if (window.innerWidth < 768) setIsCollapsed(true)
+
     let lastScrollY = window.scrollY
 
     const handleScroll = () => {
@@ -61,7 +63,7 @@ export function FloatingSocial() {
 
   return (
     <div
-      className={`fixed right-6 top-1/2 -translate-y-1/2 z-40 transition-all duration-500 ${
+      className={`floating-social fixed right-6 top-1/2 -translate-y-1/2 z-40 transition-all duration-500 ${
         isVisible ? "translate-x-0 opacity-100" : "translate-x-20 opacity-0"
       }`}
     >

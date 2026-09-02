@@ -5,8 +5,10 @@ import { GeistMono } from "geist/font/mono"
 import { Analytics } from "@vercel/analytics/next"
 import { Navigation } from "@/components/navigation"
 import { FloatingSocial } from "@/components/floating-social"
+import { PageLoader } from "@/components/page-loader"
 import { ThemeProvider } from "@/components/theme-provider"
 import StructuredData from "@/components/structured-data"
+import { SiteFooter } from "@/components/site-footer"
 import "./globals.css"
 import { Suspense } from "react"
 
@@ -80,7 +82,9 @@ export default function RootLayout({
             <Navigation />
             <FloatingSocial />
           </Suspense>
+            <PageLoader />
           <main className="pt-16">{children}</main>
+          <SiteFooter />
           <Analytics />
         </ThemeProvider>
       </body>

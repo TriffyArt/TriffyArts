@@ -3,10 +3,8 @@
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Heart, Download, Share2, Eye, Palette, Sparkles } from "lucide-react"
+import { Heart, Share2, Palette, Sparkles } from "lucide-react"
 import { useState, useEffect, Suspense } from "react"
-import { title } from "process"
-import { Description } from "@radix-ui/react-toast"
 import { useSearchParams } from "next/navigation"
 
 
@@ -127,7 +125,7 @@ function ArtsContent() {
 	const featuredArtworks = artworks.filter((artwork) => artwork.featured)
 
 	return (
-		<div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+		<div className="mission-page min-h-screen py-12 px-4 sm:px-6 lg:px-8">
 			<div className="max-w-7xl mx-auto">
 				{/* Header */}
 				<section className="text-center mb-16 animate-fade-in">
