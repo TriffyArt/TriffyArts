@@ -11,7 +11,7 @@ import { useSearchParams } from "next/navigation"
 
 
 
-const categories = ["All","Pixel Art", "Digital Art", "Illustration","Product Designs"]
+const categories = ["All","Pixel Art", "Digital Art", "Illustration"]
 
 type Artwork = {
 	id: string
