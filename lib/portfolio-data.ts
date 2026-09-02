@@ -57,13 +57,31 @@ export type FeaturedWork = {
   href: string
 }
 
-// Flattens featured items across all folders, newest first (folder ids are timestamp-prefixed).
+// Surfaces featured works across all folders, newest first (folder ids are timestamp-prefixed).
+// For "Graphic Design" folders the featured card represents the whole folder (preview image,
+// folder title). For other types each featured item is shown individually.
 export function getFeaturedWorks(folders: DesignFolder[], limit = 3): FeaturedWork[] {
   return folders
     .slice()
     .sort((first, second) => second.id.localeCompare(first.id))
-    .flatMap((folder) =>
-      folder.items
+    .flatMap((folder) => {
+      // Graphic Design items live inside a folder — feature the folder itself.
+      if (folder.type === "Graphic Design") {
+        const hasFeatured = folder.items.some((item) => item.featured)
+        if (!hasFeatured) return []
+        return [
+          {
+            id: folder.id,
+            title: folder.title,
+            category: folder.category,
+            image: folder.preview,
+            href: `/${TYPE_TO_SLUG[folder.type]}`,
+          },
+        ]
+      }
+
+      // Arts, Projects, Crafts — feature individual items as before.
+      return folder.items
         .filter((item) => item.featured)
         .map((item) => ({
           id: item.id,
@@ -71,7 +89,7 @@ export function getFeaturedWorks(folders: DesignFolder[], limit = 3): FeaturedWo
           category: item.category,
           image: item.image,
           href: folder.type === "Arts" ? `/arts?id=${item.id}` : `/${TYPE_TO_SLUG[folder.type]}`,
-        })),
-    )
+        }))
+    })
     .slice(0, limit)
 }

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-import { Mail, Phone, MapPin, Clock, Send, MessageCircle, Briefcase, Palette, Coffee, Calendar } from "lucide-react"
+import { Mail, Phone, MapPin, Clock, Send, MessageCircle, Palette, Coffee, Calendar } from "lucide-react"
 import { useState } from "react"
 
 const services = [
@@ -21,13 +21,13 @@ const services = [
 		icon: Palette,
 		title: "Artisan Crafts & Handmade Goods",
 		description: "Unique handmade items, custom orders, and craft workshops",
-		price: "Starting at ₱300",
+		price: "Starting at ₱400",
 	},
 	{
 		icon: MessageCircle,
 		title: "Figma Web Design & UI/UX",
 		description: "Website design, user interface, and user experience design",
-		price: "Starting at $30",
+		price: "Starting at $200",
 	},
 	{
 		icon: Coffee,
@@ -129,7 +129,7 @@ export default function ContactPage() {
 		setIsSubmitting(true)
 
 		try {
-			const response = await fetch("https://	formspree.io/f/xpwkzzww", {
+			const response = await fetch("https://formspree.io/f/xpwkzzww", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -151,16 +151,19 @@ export default function ContactPage() {
 					projectType: "",
 					budget: "",
 				})
+			} else {
+				setErrorMessage("Your message could not be sent. Please try again.")
 			}
 		} catch (error) {
 			console.error("Error submitting form:", error)
+			setErrorMessage("Your message could not be sent. Please try again.")
 		}
 
 		setIsSubmitting(false)
 	}
 
 	return (
-		<div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+		<div className="mission-page min-h-screen py-12 px-4 sm:px-6 lg:px-8">
 			<div className="max-w-7xl mx-auto">
 				{/* Header */}
 				<section className="text-center mb-16 animate-fade-in">
@@ -169,10 +172,10 @@ export default function ContactPage() {
 						<Send className="h-6 w-6 text-primary animate-pulse" />
 					</div>
 					<h1 className="text-4xl sm:text-5xl font-bold mb-6 text-balance">
-						Let's <span className="text-primary">Connect</span>
+						{"Let's"} <span className="text-primary">Connect</span>
 					</h1>
 					<p className="text-xl text-muted-foreground text-balance max-w-3xl mx-auto">
-						Ready to bring your creative vision to life? I'd love to hear about your project and discuss how we can work
+						{"Ready to bring your creative vision to life? I'd love to hear about your project and discuss how we can work"}
 						together to create something amazing.
 					</p>
 				</section>
@@ -415,11 +418,7 @@ export default function ContactPage() {
 								</div>
 								<div className="flex items-center justify-between">
 									<span className="text-sm">Rush Projects</span>
-									<Badge variant="secondary">Limited</Badge>
-								</div>
-								<div className="flex items-center justify-between">
-									<span className="text-sm">Next Opening</span>
-									<span className="text-sm text-muted-foreground">December 2025</span>
+									<Badge variant="secondary">Available</Badge>
 								</div>
 							</div>
 						</Card>
@@ -431,7 +430,7 @@ export default function ContactPage() {
 					<div className="text-center mb-12">
 						<h2 className="text-3xl font-bold mb-4">Frequently Asked Questions</h2>
 						<p className="text-muted-foreground text-balance max-w-2xl mx-auto">
-							Here are some common questions about working with me. Don't see your question? Feel free to ask!
+							{"Here are some common questions about working with me. Don't see your question? Feel free to ask!"}
 						</p>
 					</div>
 
@@ -452,9 +451,9 @@ export default function ContactPage() {
               <Coffee className="h-6 w-6 text-primary" />
               <MessageCircle className="h-5 w-5 text-primary animate-pulse" />
             </div>
-            <h2 className="text-3xl font-bold mb-4">Let's Grab a Virtual Coffee</h2>
+			<h2 className="text-3xl font-bold mb-4">{"Let's Grab a Virtual Coffee"}</h2>
             <p className="text-lg text-muted-foreground text-balance mb-8 max-w-2xl mx-auto">
-              Prefer to chat before diving into a project? I'm always up for a friendly conversation about your ideas,
+			  {"Prefer to chat before diving into a project? I'm always up for a friendly conversation about your ideas,"}
               creative challenges, or just to say hello!
             </p>
             <Button size="lg" variant="outline" className="group bg-transparent">

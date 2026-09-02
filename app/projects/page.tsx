@@ -76,7 +76,7 @@ export default function ProjectsPage() {
 			: projects.filter((project) => project.category === selectedCategory)
 
 	return (
-		<div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+		<div className="mission-page min-h-screen py-12 px-4 sm:px-6 lg:px-8">
 			<div className="max-w-7xl mx-auto">
 				{/* Header */}
 				<section className="text-center mb-16 animate-fade-in">
@@ -229,7 +229,7 @@ export default function ProjectsPage() {
 					<Card className="p-12 bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
 						<h2 className="text-3xl font-bold mb-4">Have a Project in Mind?</h2>
 						<p className="text-lg text-muted-foreground text-balance mb-8 max-w-2xl mx-auto">
-							I'm always excited to work on new creative challenges. Let's discuss
+							{"I'm always excited to work on new creative challenges. Let's discuss"}
 							how we can bring your vision to life.
 						</p>
 						<Button size="lg" className="group">

@@ -1,7 +1,9 @@
-import { put } from "@vercel/blob"
+import { del, put } from "@vercel/blob"
 import { NextRequest, NextResponse } from "next/server"
 import { isAdminAuthenticated } from "@/lib/portfolio-auth"
 import { FOLDER_PREFIX, folderSchema, readPortfolioFolders } from "@/lib/portfolio-data"
+
+const FOLDER_ID_PATTERN = /^[a-z0-9-]+$/
 
 function isSameOrigin(request: NextRequest) {
   const origin = request.headers.get("origin")
@@ -41,6 +43,23 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Portfolio write error:", error)
     return NextResponse.json({ error: "Could not save portfolio folder" }, { status: 500 })
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  if (!isSameOrigin(request) || !isAdminAuthenticated()) return unauthorized()
+
+  try {
+    const { ids } = (await request.json()) as { ids?: unknown }
+    if (!Array.isArray(ids) || ids.length === 0 || ids.length > 50 || !ids.every((id) => typeof id === "string" && FOLDER_ID_PATTERN.test(id))) {
+      return NextResponse.json({ error: "Invalid post ids" }, { status: 400 })
+    }
+
+    await Promise.all(ids.map((id) => del(`${FOLDER_PREFIX}${id}.json`)))
+    return NextResponse.json({ deleted: ids })
+  } catch (error) {
+    console.error("Portfolio delete error:", error)
+    return NextResponse.json({ error: "Could not delete portfolio folder(s)" }, { status: 500 })
   }
 }
 

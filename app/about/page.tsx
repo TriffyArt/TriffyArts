@@ -12,14 +12,14 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <div className="mission-page min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         {/* Hero Section */}
         <section className="mb-20 animate-fade-in">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="text-4xl sm:text-5xl font-bold mb-6 text-balance">
-                Hello, I'm <span className="text-primary">Psalm</span>
+                Hello, {"I'm"} <span className="text-primary">Psalm</span>
               </h1>
               <p className="text-xl text-muted-foreground text-balance mb-6 leading-relaxed">
                 a passionate digital artist, Web UI/UX Designer with over 4 years of experience in digital art and 2 years of experience in web UI/UX design.
@@ -32,7 +32,7 @@ export default function AboutPage() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button asChild className="group">
                   <Link href="/contact">
-                    Let's Collaborate
+                    {"Let's Collaborate"}
                     <Heart className="ml-2 h-4 w-4 transition-transform group-hover:scale-110" />
                   </Link>
                 </Button>
@@ -160,7 +160,7 @@ export default function AboutPage() {
                 },
               ].map((item, index) => (
                 <div
-                  key={item.year}
+                  key={`${item.year}-${item.title}`}
                   className="relative flex items-start mb-12 animate-slide-up"
                   style={{ animationDelay: `${index * 150}ms` }}
                 >
@@ -189,9 +189,9 @@ export default function AboutPage() {
             </div>
             <h2 className="text-3xl font-bold mb-6">My Creative Philosophy</h2>
             <blockquote className="text-xl text-muted-foreground text-balance leading-relaxed italic mb-8">
-              "Art is not what you see, but what you make others see. I believe in creating work that not only looks
+              &quot;Art is not what you see, but what you make others see. I believe in creating work that not only looks
               beautiful but also tells a story, evokes emotion, and creates meaningful connections between the viewer
-              and the message."
+              and the message.&quot;
             </blockquote>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
               {[
@@ -222,7 +222,7 @@ export default function AboutPage() {
           <Card className="p-12 bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
             <h2 className="text-3xl font-bold mb-4">Ready to Create Together?</h2>
             <p className="text-lg text-muted-foreground text-balance mb-8 max-w-2xl mx-auto">
-              I'm always excited to take on new challenges and collaborate with passionate people. Let's discuss how we
+              {"I'm always excited to take on new challenges and collaborate with passionate people. Let's discuss how we"}
               can bring your creative vision to life.
             </p>
             <Button asChild size="lg" className="group">
