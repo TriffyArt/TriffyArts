@@ -300,7 +300,7 @@ export default function AdminPage() {
             </button>
           )}
         </div>
-        <p className="text-sm text-muted-foreground">Select posts and delete them directly, or remove them from your Vercel Blob dashboard.</p>
+        <p className="text-sm text-muted-foreground">Select posts and delete them directly, or remove them from your Supabase Storage dashboard.</p>
         {folders.map((folder) => (
           <div key={folder.id} className="flex items-center gap-4 border border-border p-4">
             <input
@@ -326,7 +326,7 @@ export default function AdminPage() {
           <div className="w-full max-w-md space-y-4 border border-border bg-background p-6">
             <h3 className="text-lg font-semibold">Delete {selectedIds.size} post{selectedIds.size === 1 ? "" : "s"}?</h3>
             <p className="text-sm text-muted-foreground">
-              This permanently removes the selected post{selectedIds.size === 1 ? "" : "s"} from Blob storage. This cannot be undone.
+              This permanently removes the selected post{selectedIds.size === 1 ? "" : "s"} from Supabase storage. This cannot be undone.
             </p>
             <ul className="max-h-40 list-disc space-y-1 overflow-y-auto pl-5 text-sm text-muted-foreground">
               {folders.filter((folder) => selectedIds.has(folder.id)).map((folder) => (

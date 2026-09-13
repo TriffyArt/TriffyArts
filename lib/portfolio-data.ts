@@ -1,7 +1,7 @@
-import { list } from "@vercel/blob"
 import { z } from "zod"
+import { getSupabaseServerClient, PORTFOLIO_BUCKET } from "@/lib/supabase"
 
-export const FOLDER_PREFIX = "portfolio/folders/"
+export const FOLDER_PREFIX = "folders/"
 
 export const folderItemSchema = z.object({
   id: z.string().min(1).max(200),
@@ -32,11 +32,20 @@ export type DesignFolder = z.infer<typeof folderSchema>
 export type DesignFolderItem = z.infer<typeof folderItemSchema>
 
 export async function readPortfolioFolders(): Promise<DesignFolder[]> {
-  const { blobs } = await list({ prefix: FOLDER_PREFIX })
+  const supabase = getSupabaseServerClient()
+  const { data: files, error: listError } = await supabase.storage
+    .from(PORTFOLIO_BUCKET)
+    .list(FOLDER_PREFIX.replace(/\/$/, ""))
+  if (listError) throw listError
+
+  const jsonFiles = (files ?? []).filter((file) => file.name.endsWith(".json"))
   const folders = await Promise.all(
-    blobs.map(async (blob) => {
-      const response = await fetch(blob.url, { cache: "no-store" })
-      return (await response.json()) as DesignFolder
+    jsonFiles.map(async (file) => {
+      const { data, error } = await supabase.storage
+        .from(PORTFOLIO_BUCKET)
+        .download(`${FOLDER_PREFIX}${file.name}`)
+      if (error) throw error
+      return JSON.parse(await data.text()) as DesignFolder
     }),
   )
   return folders.sort((first, second) => first.title.localeCompare(second.title))

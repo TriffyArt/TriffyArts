@@ -10,24 +10,28 @@ export const metadata: Metadata = {
 // Refresh on every request so admin-marked "featured" posts show up immediately.
 export const dynamic = "force-dynamic"
 
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || ""
+const supabaseAssetUrl = (name: string) =>
+  supabaseUrl ? `${supabaseUrl}/storage/v1/object/public/portfolio/assets/${name}` : `/${name}`
+
 const fallbackFeaturedWorks = [
   {
     id: "1",
-    image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Welcome2025.gif",
+    image: supabaseAssetUrl("Welcome2025.gif"),
     title: "Welcome 2025",
     category: "Pixel Art",
     href: "/arts?id=1",
   },
   {
     id: "2",
-    image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/Pizza.gif",
+    image: supabaseAssetUrl("Pizza.gif"),
     title: "Cheesy Pizza",
     category: "Pixel Art",
     href: "/arts?id=2",
   },
   {
     id: "3",
-    image: "https://3k8zfxpvjkeu6ios.public.blob.vercel-storage.com/robotik.gif",
+    image: supabaseAssetUrl("robotik.gif"),
     title: "Robotik",
     category: "Pixel Art",
     href: "/arts?id=3",

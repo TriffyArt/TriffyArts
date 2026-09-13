@@ -1,14 +1,14 @@
-import { put } from "@vercel/blob"
 import { NextRequest, NextResponse } from "next/server"
 import { isAdminAuthenticated } from "@/lib/portfolio-auth"
+import { getSupabaseServerClient, PORTFOLIO_BUCKET } from "@/lib/supabase"
 
 export async function POST(request: NextRequest) {
   if (request.headers.get("origin") !== request.nextUrl.origin || !isAdminAuthenticated()) {
     return NextResponse.json({ error: "Admin authentication required" }, { status: 401 })
   }
 
-  if (!process.env.BLOB_READ_WRITE_TOKEN && !process.env.BLOB_STORE_ID) {
-    return NextResponse.json({ error: "Blob storage is not configured" }, { status: 500 })
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return NextResponse.json({ error: "Storage is not configured" }, { status: 500 })
   }
 
   try {
@@ -31,12 +31,19 @@ export async function POST(request: NextRequest) {
     }
 
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-")
-    const blob = await put(`portfolio/assets/${Date.now()}-${safeName}`, file, {
-      access: "public",
+    const path = `assets/${Date.now()}-${safeName}`
+
+    const supabase = getSupabaseServerClient()
+    const { error } = await supabase.storage.from(PORTFOLIO_BUCKET).upload(path, file, {
+      contentType: file.type,
+      upsert: false,
     })
+    if (error) throw error
+
+    const { data } = supabase.storage.from(PORTFOLIO_BUCKET).getPublicUrl(path)
 
     return NextResponse.json({
-      url: blob.url,
+      url: data.publicUrl,
       success: true,
     })
   } catch (error) {

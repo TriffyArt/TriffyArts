@@ -1,7 +1,7 @@
-import { del, put } from "@vercel/blob"
 import { NextRequest, NextResponse } from "next/server"
 import { isAdminAuthenticated } from "@/lib/portfolio-auth"
 import { FOLDER_PREFIX, folderSchema, readPortfolioFolders } from "@/lib/portfolio-data"
+import { getSupabaseServerClient, PORTFOLIO_BUCKET } from "@/lib/supabase"
 
 const FOLDER_ID_PATTERN = /^[a-z0-9-]+$/
 
@@ -33,13 +33,18 @@ export async function POST(request: NextRequest) {
     }
     const savedFolder = parsed.data
 
-    const pathname = `${FOLDER_PREFIX}${savedFolder.id}.json`
-    const blob = await put(pathname, JSON.stringify(savedFolder), {
-      access: "public",
-      addRandomSuffix: false,
-      contentType: "application/json",
-    })
-    return NextResponse.json({ folder: savedFolder, url: blob.url }, { status: 201 })
+    const path = `${FOLDER_PREFIX}${savedFolder.id}.json`
+    const supabase = getSupabaseServerClient()
+    const { error } = await supabase.storage
+      .from(PORTFOLIO_BUCKET)
+      .upload(path, JSON.stringify(savedFolder), {
+        contentType: "application/json",
+        upsert: true,
+      })
+    if (error) throw error
+
+    const { data } = supabase.storage.from(PORTFOLIO_BUCKET).getPublicUrl(path)
+    return NextResponse.json({ folder: savedFolder, url: data.publicUrl }, { status: 201 })
   } catch (error) {
     console.error("Portfolio write error:", error)
     return NextResponse.json({ error: "Could not save portfolio folder" }, { status: 500 })
@@ -55,7 +60,11 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "Invalid post ids" }, { status: 400 })
     }
 
-    await Promise.all(ids.map((id) => del(`${FOLDER_PREFIX}${id}.json`)))
+    const supabase = getSupabaseServerClient()
+    const { error } = await supabase.storage
+      .from(PORTFOLIO_BUCKET)
+      .remove(ids.map((id) => `${FOLDER_PREFIX}${id}.json`))
+    if (error) throw error
     return NextResponse.json({ deleted: ids })
   } catch (error) {
     console.error("Portfolio delete error:", error)
