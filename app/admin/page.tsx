@@ -1,0 +1,398 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import { Loader2, LogOut, Upload, X } from "lucide-react"
+
+type Folder = {
+  id: string
+  type: "Graphic Design" | "Arts" | "Projects" | "Crafts"
+  title: string
+  description: string
+  preview: string
+  category: string
+  year: string
+  client?: string
+  projectType?: string
+  link?: string
+  items: { id: string; title: string; description: string; image: string; category: string; year: string; tags: string[]; featured?: boolean }[]
+}
+
+const portfolioTypes = ["Graphic Design", "Arts", "Projects", "Crafts"] as const
+const categoriesByType: Record<(typeof portfolioTypes)[number], string[]> = {
+  "Graphic Design": ["Social Media", "Public Materials", "Prints"],
+  Arts: ["Pixel Art", "Digital Art", "Illustration", "Product Designs"],
+  Projects: ["Web Development", "Web Design", "App Design", "UI/UX"],
+  Crafts: ["Artisan Keycap", "Keychain", "Hippers"],
+}
+
+export default function AdminPage() {
+  const [authenticated, setAuthenticated] = useState(false)
+  const [password, setPassword] = useState("")
+  const [folders, setFolders] = useState<Folder[]>([])
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("")
+  const [type, setType] = useState<(typeof portfolioTypes)[number]>(portfolioTypes[0])
+  const [category, setCategory] = useState(categoriesByType[portfolioTypes[0]][0])
+  const [year, setYear] = useState(String(new Date().getFullYear()))
+  const [tags, setTags] = useState("")
+  const [client, setClient] = useState("")
+  const [projectType, setProjectType] = useState("")
+  const [link, setLink] = useState("")
+  const [featured, setFeatured] = useState(false)
+  const [files, setFiles] = useState<File[]>([])
+  const [filePreviews, setFilePreviews] = useState<string[]>([])
+  const [message, setMessage] = useState("")
+  const [busy, setBusy] = useState(false)
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+
+  const loadFolders = async () => {
+    const response = await fetch("/api/portfolio", { cache: "no-store" })
+    if (response.ok) setFolders((await response.json()).folders)
+  }
+
+  useEffect(() => {
+    fetch("/api/admin")
+      .then((response) => response.json())
+      .then(async (data) => {
+        setAuthenticated(data.authenticated)
+        if (data.authenticated) await loadFolders()
+      })
+  }, [])
+
+  useEffect(() => {
+    const previews = files.map((file) => URL.createObjectURL(file))
+    setFilePreviews(previews)
+    return () => previews.forEach((preview) => URL.revokeObjectURL(preview))
+  }, [files])
+
+  const login = async (event: React.FormEvent) => {
+    event.preventDefault()
+    setBusy(true)
+    const response = await fetch("/api/admin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password }),
+    })
+    setBusy(false)
+    if (response.ok) {
+      setAuthenticated(true)
+      setPassword("")
+      await loadFolders()
+    } else setMessage("Incorrect password")
+  }
+
+  const createFolder = async (event: React.FormEvent) => {
+    event.preventDefault()
+    if (!files.length) {
+      setMessage("Choose at least one image")
+      return
+    }
+    setBusy(true)
+    setMessage(type === "Graphic Design" ? "Uploading images..." : "Uploading image...")
+
+    try {
+      const uploaded = await Promise.all(
+        files.map(async (file) => {
+          const formData = new FormData()
+          formData.append("file", file)
+          const response = await fetch("/api/upload", { method: "POST", body: formData })
+          if (!response.ok) {
+            const error = (await response.json().catch(() => null)) as { error?: string } | null
+            throw new Error(error?.error ?? "Image upload failed")
+          }
+          return (await response.json()).url as string
+        }),
+      )
+      const folderId = `${Date.now()}-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`
+      const normalizedTags = tags.split(",").map((tag) => tag.trim()).filter(Boolean)
+      const items = uploaded.map((image, index) => ({
+        id: `${folderId}-${index + 1}`,
+        title: type === "Graphic Design" ? files[index].name.replace(/\.[^/.]+$/, "") : title,
+        description,
+        image,
+        category,
+        year,
+        tags: normalizedTags,
+        featured,
+      }))
+      const response = await fetch("/api/portfolio", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: folderId, title, description, preview: uploaded[0], category, year, type, client, projectType, link, items }),
+      })
+      if (!response.ok) throw new Error("Post upload failed")
+      setTitle("")
+      setDescription("")
+      setType(portfolioTypes[0])
+      setCategory(categoriesByType[portfolioTypes[0]][0])
+      setTags("")
+      setClient("")
+      setProjectType("")
+      setLink("")
+      setFiles([])
+      setFilePreviews([])
+      setFeatured(false)
+      setMessage("Post published")
+      await loadFolders()
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not publish post")
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const logout = async () => {
+    await fetch("/api/admin", { method: "DELETE" })
+    setAuthenticated(false)
+    setFolders([])
+  }
+
+  const toggleSelected = (id: string) => {
+    setSelectedIds((current) => {
+      const next = new Set(current)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  const toggleFeatured = async (folder: Folder) => {
+    const isCurrentlyFeatured = folder.items.some((item) => item.featured)
+    const nextFeatured = !isCurrentlyFeatured
+    const updatedFolder: Folder = {
+      ...folder,
+      items: folder.items.map((item) => ({ ...item, featured: nextFeatured })),
+    }
+
+    setBusy(true)
+    try {
+      const response = await fetch("/api/portfolio", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedFolder),
+      })
+      if (!response.ok) throw new Error("Could not update featured status")
+      await loadFolders()
+      setMessage(`Updated "${folder.title}" featured status`)
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not update featured status")
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const deleteSelected = async () => {
+    setDeleting(true)
+    try {
+      const response = await fetch("/api/portfolio", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: Array.from(selectedIds) }),
+      })
+      if (!response.ok) throw new Error("Could not delete selected posts")
+      setFolders((current) => current.filter((folder) => !selectedIds.has(folder.id)))
+      setSelectedIds(new Set())
+      setMessage("Selected posts deleted")
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not delete selected posts")
+    } finally {
+      setDeleting(false)
+      setConfirmingDelete(false)
+    }
+  }
+
+  if (!authenticated) {
+    return (
+      <main className="mx-auto flex min-h-screen max-w-md items-center px-4 py-16">
+        <form onSubmit={login} className="w-full space-y-5 border border-border p-6 sm:p-8">
+          <div>
+            <h1 className="text-2xl font-semibold">Portfolio Admin</h1>
+            <p className="mt-2 text-sm text-muted-foreground">Sign in to manage your assets.</p>
+          </div>
+          <input
+            type="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            placeholder="Admin password"
+            className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            required
+          />
+          <button disabled={busy} className="flex h-10 w-full items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm text-primary-foreground disabled:opacity-50">
+            {busy && <Loader2 className="h-4 w-4 animate-spin" />}
+            Sign in
+          </button>
+          {message && <p className="text-sm text-destructive">{message}</p>}
+        </form>
+      </main>
+    )
+  }
+
+  return (
+    <main className="mx-auto min-h-screen max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mb-10 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-semibold">Portfolio Admin</h1>
+          <p className="mt-2 text-muted-foreground">Upload posts for Arts, Projects, Graphic Design, and Crafts.</p>
+        </div>
+        <button onClick={logout} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+          <LogOut className="h-4 w-4" /> Log out
+        </button>
+      </div>
+
+      <form onSubmit={createFolder} className="grid gap-4 border border-border p-5 sm:grid-cols-2 sm:p-8">
+        <input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Post title" className="h-10 rounded-md border border-input bg-background px-3 text-sm sm:col-span-2" required />
+        <textarea value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Post description" className="min-h-24 rounded-md border border-input bg-background px-3 py-2 text-sm sm:col-span-2" />
+        <select
+            value={type}
+            onChange={(event) => {
+              const nextType = event.target.value as (typeof portfolioTypes)[number]
+              setType(nextType)
+              setCategory(categoriesByType[nextType][0])
+              setFiles((current) => nextType === "Graphic Design" ? current : current.slice(0, 1))
+            }}
+            className="h-10 rounded-md border border-input bg-background px-3 text-sm sm:col-span-2"
+            aria-label="Portfolio section"
+          >
+          {portfolioTypes.map((item) => <option key={item}>{item}</option>)}
+        </select>
+        <select value={category} onChange={(event) => setCategory(event.target.value)} className="h-10 rounded-md border border-input bg-background px-3 text-sm">
+            {categoriesByType[type].map((item) => <option key={item}>{item}</option>)}
+        </select>
+        <input value={year} onChange={(event) => setYear(event.target.value)} placeholder="Year" className="h-10 rounded-md border border-input bg-background px-3 text-sm" required />
+          <input value={tags} onChange={(event) => setTags(event.target.value)} placeholder="Tags, separated by commas" className="h-10 rounded-md border border-input bg-background px-3 text-sm sm:col-span-2" />
+        <label className="flex items-center gap-2 text-sm sm:col-span-2">
+          <input type="checkbox" checked={featured} onChange={(event) => setFeatured(event.target.checked)} className="h-4 w-4 rounded border-input" />
+          Feature on homepage
+        </label>
+        {type === "Projects" && (
+          <>
+            <input value={client} onChange={(event) => setClient(event.target.value)} placeholder="Client" className="h-10 rounded-md border border-input bg-background px-3 text-sm" required />
+            <input value={projectType} onChange={(event) => setProjectType(event.target.value)} placeholder="Project type" className="h-10 rounded-md border border-input bg-background px-3 text-sm" required />
+            <input type="url" value={link} onChange={(event) => setLink(event.target.value)} placeholder="Project link (optional)" className="h-10 rounded-md border border-input bg-background px-3 text-sm sm:col-span-2" />
+          </>
+        )}
+        <label className="flex min-h-24 cursor-pointer items-center justify-center gap-2 rounded-md border border-dashed border-border p-4 text-center text-sm text-muted-foreground sm:col-span-2">
+          <Upload className="h-4 w-4" />
+          {files.length ? `${files.length} image${files.length === 1 ? "" : "s"} selected` : type === "Graphic Design" ? "Choose multiple images" : "Choose one preview image"}
+          <input
+            type="file"
+            accept="image/*"
+            multiple={type === "Graphic Design"}
+            onChange={(event) => {
+              const selectedFiles = Array.from(event.target.files ?? [])
+              setFiles(type === "Graphic Design" ? selectedFiles : selectedFiles.slice(0, 1))
+            }}
+            className="sr-only"
+          />
+        </label>
+        {files.length > 0 && (
+          <div className="grid grid-cols-2 gap-3 sm:col-span-2 sm:grid-cols-3 lg:grid-cols-4">
+            {files.map((file, index) => (
+              <div key={`${file.name}-${file.lastModified}`} className="group relative min-w-0 border border-border bg-muted/20 p-2">
+                <img src={filePreviews[index]} alt={`Selected preview ${index + 1}`} className="aspect-square w-full object-contain" />
+                <p className="truncate pt-2 text-xs text-muted-foreground">{file.name}</p>
+                <button
+                  type="button"
+                  aria-label={`Remove ${file.name}`}
+                  onClick={() => setFiles((current) => current.filter((_, fileIndex) => fileIndex !== index))}
+                  className="absolute right-1 top-1 rounded-full bg-background/90 p-1 text-foreground opacity-0 shadow transition-opacity group-hover:opacity-100 focus:opacity-100"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        <button disabled={busy} className="flex h-10 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm text-primary-foreground disabled:opacity-50 sm:col-span-2">
+          {busy && <Loader2 className="h-4 w-4 animate-spin" />}
+          Upload post
+        </button>
+        {message && <p className="text-sm text-muted-foreground sm:col-span-2">{message}</p>}
+      </form>
+
+      <section className="mt-10 space-y-3">
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-lg font-semibold">Published posts</h2>
+          {selectedIds.size > 0 && (
+            <button
+              type="button"
+              onClick={() => setConfirmingDelete(true)}
+              className="rounded-md bg-destructive px-3 py-1.5 text-sm text-destructive-foreground"
+            >
+              Delete selected ({selectedIds.size})
+            </button>
+          )}
+        </div>
+        <p className="text-sm text-muted-foreground">Select posts and delete them directly, or remove them from your Supabase Storage dashboard.</p>
+        {folders.map((folder) => {
+          const isFeatured = folder.items.some((item) => item.featured)
+          return (
+            <div key={folder.id} className="flex items-center gap-4 border border-border p-4">
+              <input
+                type="checkbox"
+                checked={selectedIds.has(folder.id)}
+                onChange={() => toggleSelected(folder.id)}
+                aria-label={`Select ${folder.title}`}
+                className="h-4 w-4 shrink-0 rounded border-input"
+              />
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-medium">{folder.title}</p>
+                <p className="text-sm text-muted-foreground">{folder.type} · {folder.items.length} design{folder.items.length === 1 ? "" : "s"} · {folder.category}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => toggleFeatured(folder)}
+                disabled={busy}
+                title={isFeatured ? "Click to remove from homepage featured" : "Click to feature on homepage"}
+                className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors disabled:opacity-50 ${
+                  isFeatured
+                    ? "bg-primary text-primary-foreground hover:bg-primary/80"
+                    : "border border-input text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                }`}
+              >
+                {isFeatured ? "★ Featured" : "+ Feature"}
+              </button>
+            </div>
+          )
+        })}
+      </section>
+
+      {confirmingDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" role="dialog" aria-modal="true">
+          <div className="w-full max-w-md space-y-4 border border-border bg-background p-6">
+            <h3 className="text-lg font-semibold">Delete {selectedIds.size} post{selectedIds.size === 1 ? "" : "s"}?</h3>
+            <p className="text-sm text-muted-foreground">
+              This permanently removes the selected post{selectedIds.size === 1 ? "" : "s"} from Supabase storage. This cannot be undone.
+            </p>
+            <ul className="max-h-40 list-disc space-y-1 overflow-y-auto pl-5 text-sm text-muted-foreground">
+              {folders.filter((folder) => selectedIds.has(folder.id)).map((folder) => (
+                <li key={folder.id} className="truncate">{folder.title}</li>
+              ))}
+            </ul>
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setConfirmingDelete(false)}
+                disabled={deleting}
+                className="rounded-md border border-input px-4 py-2 text-sm disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={deleteSelected}
+                disabled={deleting}
+                className="flex items-center gap-2 rounded-md bg-destructive px-4 py-2 text-sm text-destructive-foreground disabled:opacity-50"
+              >
+                {deleting && <Loader2 className="h-4 w-4 animate-spin" />}
+                Delete permanently
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </main>
+  )
+}

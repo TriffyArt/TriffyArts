@@ -13,6 +13,8 @@ const navItems = [
   { name: "About", href: "/about" },
   { name: "Projects", href: "/projects" },
   { name: "Arts", href: "/arts" },
+  { name: "Graphic Design", href: "/graphic-design" },
+  { name: "Crafts", href: "/crafts" },
   { name: "Contact", href: "/contact" },
 ]
 
@@ -21,15 +23,14 @@ export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="mission-navigation fixed top-0 left-0 right-0 z-50 bg-background/50 backdrop-blur-md border-b border-border">
+      <div className="max-w-6xl mx-auto px-5 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/ " className="flex items-center space-x-2">
-          { /* <div className="w-21 h-20 rounded-lg flex items-center justify-center">
-              <img src="/logo.png"/>
-            </div> */}
-            <span className="font-semibold text-lg">Psalm Salcedo</span>
+            <Link href="/" className="flex items-center space-x-2">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center">
+              <img src="/logo.png" alt="Psalm Salcedo logo" />
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
@@ -39,7 +40,7 @@ export function Navigation() {
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-primary",
+                  "mission-nav-link text-sm font-medium transition-colors hover:text-primary",
                   pathname === item.href ? "text-primary" : "text-muted-foreground",
                 )}
               >
@@ -52,7 +53,13 @@ export function Navigation() {
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center gap-2">
             <ThemeToggle />
-            <Button variant="ghost" size="sm" onClick={() => setIsOpen(!isOpen)}>
+            <Button
+              variant="ghost"
+              size="sm"
+              aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={isOpen}
+              onClick={() => setIsOpen(!isOpen)}
+            >
               {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
           </div>
@@ -67,7 +74,7 @@ export function Navigation() {
                   key={item.name}
                   href={item.href}
                   className={cn(
-                    "block px-3 py-2 text-base font-medium transition-colors hover:text-primary hover:bg-accent rounded-md",
+                    "mission-nav-link block px-3 py-2 text-base font-medium transition-colors hover:text-primary hover:bg-accent rounded-md",
                     pathname === item.href ? "text-primary bg-accent" : "text-muted-foreground",
                   )}
                   onClick={() => setIsOpen(false)}

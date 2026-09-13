@@ -26,6 +26,18 @@ export async function GET() {
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://triffyarts.vercel.app/graphic-design</loc>
+    <lastmod>2026-08-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://triffyarts.vercel.app/crafts</loc>
+    <lastmod>2026-08-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://triffyarts.vercel.app/contact</loc>
     <lastmod>2025-12-31</lastmod>
     <changefreq>yearly</changefreq>
