@@ -158,6 +158,31 @@ export default function AdminPage() {
     })
   }
 
+  const toggleFeatured = async (folder: Folder) => {
+    const isCurrentlyFeatured = folder.items.some((item) => item.featured)
+    const nextFeatured = !isCurrentlyFeatured
+    const updatedFolder: Folder = {
+      ...folder,
+      items: folder.items.map((item) => ({ ...item, featured: nextFeatured })),
+    }
+
+    setBusy(true)
+    try {
+      const response = await fetch("/api/portfolio", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedFolder),
+      })
+      if (!response.ok) throw new Error("Could not update featured status")
+      await loadFolders()
+      setMessage(`Updated "${folder.title}" featured status`)
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not update featured status")
+    } finally {
+      setBusy(false)
+    }
+  }
+
   const deleteSelected = async () => {
     setDeleting(true)
     try {
@@ -301,24 +326,37 @@ export default function AdminPage() {
           )}
         </div>
         <p className="text-sm text-muted-foreground">Select posts and delete them directly, or remove them from your Supabase Storage dashboard.</p>
-        {folders.map((folder) => (
-          <div key={folder.id} className="flex items-center gap-4 border border-border p-4">
-            <input
-              type="checkbox"
-              checked={selectedIds.has(folder.id)}
-              onChange={() => toggleSelected(folder.id)}
-              aria-label={`Select ${folder.title}`}
-              className="h-4 w-4 shrink-0 rounded border-input"
-            />
-            <div className="min-w-0 flex-1">
-              <p className="truncate font-medium">{folder.title}</p>
-              <p className="text-sm text-muted-foreground">{folder.type} · {folder.items.length} designs · {folder.category}</p>
+        {folders.map((folder) => {
+          const isFeatured = folder.items.some((item) => item.featured)
+          return (
+            <div key={folder.id} className="flex items-center gap-4 border border-border p-4">
+              <input
+                type="checkbox"
+                checked={selectedIds.has(folder.id)}
+                onChange={() => toggleSelected(folder.id)}
+                aria-label={`Select ${folder.title}`}
+                className="h-4 w-4 shrink-0 rounded border-input"
+              />
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-medium">{folder.title}</p>
+                <p className="text-sm text-muted-foreground">{folder.type} · {folder.items.length} design{folder.items.length === 1 ? "" : "s"} · {folder.category}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => toggleFeatured(folder)}
+                disabled={busy}
+                title={isFeatured ? "Click to remove from homepage featured" : "Click to feature on homepage"}
+                className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors disabled:opacity-50 ${
+                  isFeatured
+                    ? "bg-primary text-primary-foreground hover:bg-primary/80"
+                    : "border border-input text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                }`}
+              >
+                {isFeatured ? "★ Featured" : "+ Feature"}
+              </button>
             </div>
-            {folder.items.some((item) => item.featured) && (
-              <span className="shrink-0 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">Featured</span>
-            )}
-          </div>
-        ))}
+          )
+        })}
       </section>
 
       {confirmingDelete && (

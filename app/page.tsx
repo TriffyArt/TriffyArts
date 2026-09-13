@@ -9,6 +9,7 @@ export const metadata: Metadata = {
 
 // Refresh on every request so admin-marked "featured" posts show up immediately.
 export const dynamic = "force-dynamic"
+export const revalidate = 0
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || ""
 const supabaseAssetUrl = (name: string) =>
@@ -41,7 +42,10 @@ const fallbackFeaturedWorks = [
 
 
 export default async function HomePage() {
-  const folders = await readPortfolioFolders().catch(() => [])
+  const folders = await readPortfolioFolders().catch((error) => {
+    console.error("Error reading portfolio folders for homepage:", error)
+    return []
+  })
   const remoteFeaturedWorks = getFeaturedWorks(folders)
   const featuredWorks = remoteFeaturedWorks.length > 0 ? remoteFeaturedWorks : fallbackFeaturedWorks
   const artsShowcase = folders
