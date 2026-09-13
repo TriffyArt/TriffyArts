@@ -8,10 +8,10 @@ let cachedClient: ReturnType<typeof createClient> | null = null
 export function getSupabaseServerClient() {
   if (cachedClient) return cachedClient
 
-  const url = process.env.SUPABASE_URL
+  const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!url || !serviceRoleKey) {
-    throw new Error("Supabase is not configured: set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY")
+    throw new Error("Supabase is not configured: set SUPABASE_URL (or NEXT_PUBLIC_SUPABASE_URL) and SUPABASE_SERVICE_ROLE_KEY")
   }
 
   cachedClient = createClient(url, serviceRoleKey, {

@@ -7,8 +7,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Admin authentication required" }, { status: 401 })
   }
 
-  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    return NextResponse.json({ error: "Storage is not configured" }, { status: 500 })
+  const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
+  if (!supabaseUrl || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return NextResponse.json({ error: "Storage is not configured: Please set SUPABASE_URL (or NEXT_PUBLIC_SUPABASE_URL) and SUPABASE_SERVICE_ROLE_KEY environment variables." }, { status: 500 })
   }
 
   try {
